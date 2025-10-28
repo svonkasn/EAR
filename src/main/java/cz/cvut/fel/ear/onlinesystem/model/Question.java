@@ -13,4 +13,19 @@ public class Question extends AbstractEntity{
   @Column(name = "question", nullable = false)
   private String question;
 
+  public Integer getPoint() {
+    return point;
+  }
+
+  public void setPoint(Integer point) {
+    this.point = point;
+  }
+
+  public String getQuestion() {
+    return question;
+  }
+
+  public void setQuestion(String question) {
+    this.question = question;
+  }
 }

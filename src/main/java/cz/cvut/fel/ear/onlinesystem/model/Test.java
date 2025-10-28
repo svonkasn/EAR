@@ -33,4 +33,59 @@ public class Test extends AbstractEntity {
   @OneToMany(mappedBy = "test")
   private List<Termin> termins;
 
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public Integer getMaxPoints() {
+    return maxPoints;
+  }
+
+  public void setMaxPoints(Integer maxPoints) {
+    this.maxPoints = maxPoints;
+  }
+
+  public Integer getMaxAttempts() {
+    return maxAttempts;
+  }
+
+  public void setMaxAttempts(Integer maxAttempts) {
+    this.maxAttempts = maxAttempts;
+  }
+
+  public User getTeacher() {
+    return teacher;
+  }
+
+  public void setTeacher(User teacher) {
+    this.teacher = teacher;
+  }
+
+  public Course getCourse() {
+    return course;
+  }
+
+  public void setCourse(Course course) {
+    this.course = course;
+  }
+
+  public List<Termin> getTermins() {
+    return termins;
+  }
+
+  public void setTermins(List<Termin> termins) {
+    this.termins = termins;
+  }
 }

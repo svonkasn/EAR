@@ -13,6 +13,11 @@ public class Question extends AbstractEntity{
   @Column(name = "question", nullable = false)
   private String question;
 
+  @ManyToOne
+  @JoinColumn(name = "test")
+  private Test test;
+
+
   public Integer getPoint() {
     return point;
   }
@@ -27,5 +32,13 @@ public class Question extends AbstractEntity{
 
   public void setQuestion(String question) {
     this.question = question;
+  }
+
+  public Test getTest() {
+    return test;
+  }
+
+  public void setTest(Test test) {
+    this.test = test;
   }
 }

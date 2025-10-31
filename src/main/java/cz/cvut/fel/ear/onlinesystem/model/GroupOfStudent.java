@@ -17,8 +17,9 @@ public class GroupOfStudent extends AbstractEntity {
   @JoinColumn(name = "course")
   private Course course;
 
-  @ManyToMany(mappedBy = "termins")
-  private Collection<Termin> termins;
+  @ManyToOne()
+  @JoinColumn(name = "termin")
+  private Termin termins;
 
   public Integer getNumberOfParalel() {
     return numberOfParalel;
@@ -44,11 +45,11 @@ public class GroupOfStudent extends AbstractEntity {
     this.course = course;
   }
 
-  public Collection<Termin> getTermins() {
+  public Termin getTermins() {
     return termins;
   }
 
-  public void setTermins(Collection<Termin> termins) {
+  public void setTermins(Termin termins) {
     this.termins = termins;
   }
 }

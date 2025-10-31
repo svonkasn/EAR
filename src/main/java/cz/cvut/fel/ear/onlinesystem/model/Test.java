@@ -30,8 +30,12 @@ public class Test extends AbstractEntity {
   @JoinColumn(name = "course")
   private Course course;
 
-  @OneToMany(mappedBy = "test")
-  private List<Termin> termins;
+  @ManyToOne
+  @JoinColumn(name = "termin")
+  private Termin termin;
+
+  @OneToMany(mappedBy = "question")
+  private List<Question> questions;
 
   public String getTitle() {
     return title;
@@ -81,11 +85,19 @@ public class Test extends AbstractEntity {
     this.course = course;
   }
 
-  public List<Termin> getTermins() {
-    return termins;
+  public Termin getTermin() {
+    return termin;
   }
 
-  public void setTermins(List<Termin> termins) {
-    this.termins = termins;
+  public void setTermin(Termin termin) {
+    this.termin = termin;
+  }
+
+  public List<Question> getQuestions() {
+    return questions;
+  }
+
+  public void setQuestions(List<Question> questions) {
+    this.questions = questions;
   }
 }

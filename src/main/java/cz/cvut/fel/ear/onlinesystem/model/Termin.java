@@ -15,18 +15,14 @@ public class Termin extends AbstractEntity{
   @Column(name = "endTime", nullable = false)
   private LocalDate endTime;
 
-  @ManyToOne
-  @JoinColumn(name = "test")
-  private Test test;
+  @OneToMany(mappedBy = "test")
+  private List<Test> tests;
 
   @OneToMany(mappedBy = "studentTest")
   private List<StudentTest> studentTests;
 
-  @ManyToMany
-  @JoinTable(name = "gropuOfStudent",
-  joinColumns = @JoinColumn(name = "group_id"),
-  inverseJoinColumns = @JoinColumn(name = "termin_id"))
-  private List<GroupOfStudent> groups;
+  @OneToMany(mappedBy = "groupOfStudent")
+  private List<GroupOfStudent> groupOfStudents;
 
   public LocalDate getStartTime() {
     return startTime;
@@ -44,14 +40,6 @@ public class Termin extends AbstractEntity{
     this.endTime = endTime;
   }
 
-  public Test getTest() {
-    return test;
-  }
-
-  public void setTest(Test test) {
-    this.test = test;
-  }
-
   public List<StudentTest> getStudentTests() {
     return studentTests;
   }
@@ -60,11 +48,19 @@ public class Termin extends AbstractEntity{
     this.studentTests = studentTests;
   }
 
-  public List<GroupOfStudent> getGroups() {
-    return groups;
+  public List<Test> getTests() {
+    return tests;
   }
 
-  public void setGroups(List<GroupOfStudent> groups) {
-    this.groups = groups;
+  public void setTests(List<Test> tests) {
+    this.tests = tests;
+  }
+
+  public List<GroupOfStudent> getGroupOfStudents() {
+    return groupOfStudents;
+  }
+
+  public void setGroupOfStudents(List<GroupOfStudent> groupOfStudents) {
+    this.groupOfStudents = groupOfStudents;
   }
 }

@@ -3,6 +3,8 @@ package cz.cvut.fel.ear.onlinesystem.model;
 import jakarta.persistence.*;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Course extends AbstractEntity{
@@ -17,11 +19,19 @@ public class Course extends AbstractEntity{
   @Column(name = "description", nullable=false )
   private String description;
 
-  @ManyToMany(mappedBy = "user")
-  private Collection<User> users;
+  @ManyToMany
+  @JoinTable(
+          name = "teacher_courses",
+          joinColumns = @JoinColumn(name = "course_id"),
+          inverseJoinColumns = @JoinColumn(name = "teacher_id")
+  )
+  private Set<User> teachers = new HashSet<>();
 
   @OneToMany(mappedBy = "course")
-  private Collection<Test> tests;
+  private Set<Test> tests = new HashSet<>();
+
+  @OneToMany(mappedBy = "course")
+  private Set<GroupOfStudent> groups = new HashSet<>();
 
   public String getCode() {
     return code;
@@ -47,19 +57,11 @@ public class Course extends AbstractEntity{
     this.description = description;
   }
 
-  public Collection<User> getUsers() {
-    return users;
-  }
-
-  public void setUsers(Collection<User> users) {
-    this.users = users;
-  }
-
-  public Collection<Test> getTests() {
+  public Set<Test> getTests() {
     return tests;
   }
 
-  public void setTests(Collection<Test> tests) {
+  public void setTests(Set<Test> tests) {
     this.tests = tests;
   }
 }

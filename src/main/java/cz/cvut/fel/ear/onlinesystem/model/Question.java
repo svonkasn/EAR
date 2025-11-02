@@ -10,11 +10,11 @@ public class Question extends AbstractEntity{
   private Integer point;
 
   @Basic(optional = false)
-  @Column(name = "question", nullable = false)
-  private String question;
+  @Column(name = "questionText", nullable = false)
+  private String questionText;
 
   @ManyToOne
-  @JoinColumn(name = "test")
+  @JoinColumn(name = "test_id")
   private Test test;
 
 
@@ -27,11 +27,11 @@ public class Question extends AbstractEntity{
   }
 
   public String getQuestion() {
-    return question;
+    return questionText;
   }
 
-  public void setQuestion(String question) {
-    this.question = question;
+  public void setQuestion(String questionText) {
+    this.questionText = questionText;
   }
 
   public Test getTest() {

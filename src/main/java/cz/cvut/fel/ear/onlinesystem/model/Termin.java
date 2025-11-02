@@ -2,65 +2,45 @@ package cz.cvut.fel.ear.onlinesystem.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
 public class Termin extends AbstractEntity{
   @Basic(optional = false)
   @Column(name = "startTime", nullable = false)
-  private LocalDate startTime;
+  private LocalDateTime startTime;
   @Basic(optional = false)
   @Column(name = "endTime", nullable = false)
-  private LocalDate endTime;
+  private LocalDateTime endTime;
 
-  @OneToMany(mappedBy = "test")
-  private List<Test> tests;
+  @OneToMany(mappedBy = "termin")
+  private Set<Test> tests = new HashSet<>();
 
-  @OneToMany(mappedBy = "studentTest")
-  private List<StudentTest> studentTests;
-
-  @OneToMany(mappedBy = "groupOfStudent")
-  private List<GroupOfStudent> groupOfStudents;
-
-  public LocalDate getStartTime() {
+  public LocalDateTime getStartTime() {
     return startTime;
   }
 
-  public void setStartTime(LocalDate startTime) {
+  public void setStartTime(LocalDateTime startTime) {
     this.startTime = startTime;
   }
 
-  public LocalDate getEndTime() {
+  public LocalDateTime getEndTime() {
     return endTime;
   }
 
-  public void setEndTime(LocalDate endTime) {
+  public void setEndTime(LocalDateTime endTime) {
     this.endTime = endTime;
   }
 
-  public List<StudentTest> getStudentTests() {
-    return studentTests;
-  }
-
-  public void setStudentTests(List<StudentTest> studentTests) {
-    this.studentTests = studentTests;
-  }
-
-  public List<Test> getTests() {
+  public Set<Test> getTests() {
     return tests;
   }
 
-  public void setTests(List<Test> tests) {
+  public void setTests(Set<Test> tests) {
     this.tests = tests;
-  }
-
-  public List<GroupOfStudent> getGroupOfStudents() {
-    return groupOfStudents;
-  }
-
-  public void setGroupOfStudents(List<GroupOfStudent> groupOfStudents) {
-    this.groupOfStudents = groupOfStudents;
   }
 }

@@ -2,19 +2,21 @@ package cz.cvut.fel.ear.onlinesystem.model;
 
 import jakarta.persistence.*;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 public class StudentTest extends AbstractEntity {
   @Basic(optional = false)
   @Column(name = "score", nullable = false)
   private Integer score;
 
-  @ManyToOne
-  @JoinColumn(name = "username")
+  @ManyToOne(fetch = LAZY, optional = false)
+  @JoinColumn(name = "user_id")
   private User user;
 
-  @ManyToOne
-  @JoinColumn(name = "termin")
-  private Termin termin;
+  @ManyToOne(fetch = LAZY, optional = false)
+  @JoinColumn(name = "test_id", nullable = false)
+  private Test test;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status")
@@ -36,17 +38,13 @@ public class StudentTest extends AbstractEntity {
     this.user = user;
   }
 
-  public Termin getTermin() {
-    return termin;
-  }
-
-  public void setTermin(Termin termin) {
-    this.termin = termin;
-  }
-
   public StatusTest getStatus() {
     return status;
   }
+
+  public Test getTest() { return test; }
+
+  public void setTest(Test test) { this.test = test; }
 
   public void setStatus(StatusTest status) {
     this.status = status;

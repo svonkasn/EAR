@@ -3,6 +3,10 @@ package cz.cvut.fel.ear.onlinesystem.model;
 import jakarta.persistence.*;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 public class User extends AbstractEntity{
@@ -23,18 +27,15 @@ public class User extends AbstractEntity{
   @Column(name = "role")
   private Role role;
 
-  @ManyToOne
-  @JoinColumn(name= "groupOfStudent")
+  @ManyToOne(fetch = LAZY)
+  @JoinColumn(name= "group_id")
   private GroupOfStudent groupOfStudent;
 
-  @OneToMany(mappedBy = "studentsTest")
-  private Collection<StudentTest> studentTests;
+  @OneToMany(mappedBy = "user")
+  private Set<StudentTest> studentTests = new HashSet<>();
 
-  @ManyToMany
-  @JoinTable(name = "course",
-  joinColumns = @JoinColumn(name = "teacher_id"),
-  inverseJoinColumns = @JoinColumn(name = "course_id"))
-  private Collection<Course> courses;
+  @ManyToMany(mappedBy = "teachers")
+  private Set<Course> coursesTaught = new HashSet<>();
 
   public String getUsername() {
     return username;
@@ -76,19 +77,11 @@ public class User extends AbstractEntity{
     this.groupOfStudent = groupOfStudent;
   }
 
-  public Collection<StudentTest> getStudentTests() {
+  public Set<StudentTest> getStudentTests() {
     return studentTests;
   }
 
-  public void setStudentTests(Collection<StudentTest> studentTests) {
+  public void setStudentTests(Set<StudentTest> studentTests) {
     this.studentTests = studentTests;
-  }
-
-  public Collection<Course> getCourses() {
-    return courses;
-  }
-
-  public void setCourses(Collection<Course> courses) {
-    this.courses = courses;
   }
 }

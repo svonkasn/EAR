@@ -2,7 +2,10 @@ package cz.cvut.fel.ear.onlinesystem.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 public class Test extends AbstractEntity {
@@ -23,19 +26,23 @@ public class Test extends AbstractEntity {
   private Integer maxAttempts;
 
   @ManyToOne
-  @JoinColumn(name = "teacher")
+  @JoinColumn(name = "teacher_id")
   private User teacher;
 
-  @ManyToOne
-  @JoinColumn(name = "course")
+  @ManyToOne(fetch = LAZY, optional = false)
+  @JoinColumn(name = "course_id")
   private Course course;
 
-  @ManyToOne
-  @JoinColumn(name = "termin")
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "group_id", nullable = false)
+  private GroupOfStudent group;
+
+  @ManyToOne(fetch = LAZY, optional = false)
+  @JoinColumn(name = "termin_id")
   private Termin termin;
 
-  @OneToMany(mappedBy = "question")
-  private List<Question> questions;
+  @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Question> questions = new ArrayList<>();
 
   public String getTitle() {
     return title;
@@ -100,4 +107,8 @@ public class Test extends AbstractEntity {
   public void setQuestions(List<Question> questions) {
     this.questions = questions;
   }
+
+  public GroupOfStudent getGroup() { return group; }
+
+  public void setGroup(GroupOfStudent group) { this.group = group; }
 }

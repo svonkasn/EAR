@@ -3,37 +3,40 @@ package cz.cvut.fel.ear.onlinesystem.model;
 import jakarta.persistence.*;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 public class GroupOfStudent extends AbstractEntity {
   @Basic(optional = false)
-  @Column(name = "numberOfParalel", nullable = false)
-  private Integer numberOfParalel;
+  @Column(name = "numberOfParallel", nullable = false)
+  private Integer numberOfParallel;
 
   @OneToMany(mappedBy = "groupOfStudent")
-  private Collection<User> users;
+  private Set<User> users = new HashSet<>();
 
-  @ManyToOne
-  @JoinColumn(name = "course")
+  @ManyToOne(fetch = LAZY, optional = false)
+  @JoinColumn(name = "course_id")
   private Course course;
 
-  @ManyToOne()
-  @JoinColumn(name = "termin")
-  private Termin termins;
+  @OneToMany(mappedBy = "group")
+  private Set<Test> tests = new HashSet<>();
 
-  public Integer getNumberOfParalel() {
-    return numberOfParalel;
+  public Integer getNumberOfParallel() {
+    return numberOfParallel;
   }
 
-  public void setNumberOfParalel(Integer numberOfParalel) {
-    this.numberOfParalel = numberOfParalel;
+  public void setNumberOfParallel(Integer numberOfParallel) {
+    this.numberOfParallel = numberOfParallel;
   }
 
-  public Collection<User> getUsers() {
+  public Set<User> getUsers() {
     return users;
   }
 
-  public void setUsers(Collection<User> users) {
+  public void setUsers(Set<User> users) {
     this.users = users;
   }
 
@@ -45,11 +48,10 @@ public class GroupOfStudent extends AbstractEntity {
     this.course = course;
   }
 
-  public Termin getTermins() {
-    return termins;
+  public Set<Test> getTests() {
+    return tests;
   }
-
-  public void setTermins(Termin termins) {
-    this.termins = termins;
+  public void setTests(Set<Test> tests) {
+    this.tests = tests;
   }
 }

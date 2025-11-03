@@ -25,7 +25,7 @@ public class Test extends AbstractEntity {
   @Column(name = "maxAttempts", nullable = false)
   private Integer maxAttempts;
 
-  @ManyToOne
+  @ManyToOne(fetch = LAZY, optional = false)
   @JoinColumn(name = "teacher_id")
   private User teacher;
 

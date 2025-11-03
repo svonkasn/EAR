@@ -2,6 +2,8 @@ package cz.cvut.fel.ear.onlinesystem.model;
 
 import jakarta.persistence.*;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
 public class Question extends AbstractEntity{
@@ -13,7 +15,7 @@ public class Question extends AbstractEntity{
   @Column(name = "questionText", nullable = false)
   private String questionText;
 
-  @ManyToOne
+  @ManyToOne(fetch = LAZY, optional = false)
   @JoinColumn(name = "test_id")
   private Test test;
 

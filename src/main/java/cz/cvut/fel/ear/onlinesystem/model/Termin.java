@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -16,6 +15,14 @@ public class Termin extends AbstractEntity{
   @Basic(optional = false)
   @Column(name = "endTime", nullable = false)
   private LocalDateTime endTime;
+
+  @PrePersist
+  @PreUpdate
+  private void validate() {
+    if (startTime == null || endTime == null || !startTime.isBefore(endTime)) {
+      throw new IllegalStateException("Termin: startTime must be before endTime");
+    }
+  }
 
   @OneToMany(mappedBy = "termin")
   private Set<Test> tests = new HashSet<>();

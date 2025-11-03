@@ -64,4 +64,11 @@ public class Course extends AbstractEntity{
   public void setTests(Set<Test> tests) {
     this.tests = tests;
   }
+
+  public Set<User> getTeachers() {
+    return teachers;
+  }
+  public void setTeachers(Set<User> teachers) {
+    this.teachers = teachers;
+  }
 }

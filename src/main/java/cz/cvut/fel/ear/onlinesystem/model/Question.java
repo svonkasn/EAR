@@ -26,11 +26,11 @@ public class Question extends AbstractEntity{
     this.point = point;
   }
 
-  public String getQuestion() {
+  public String getQuestionText() {
     return questionText;
   }
 
-  public void setQuestion(String questionText) {
+  public void setQuestionText(String questionText) {
     this.questionText = questionText;
   }
 

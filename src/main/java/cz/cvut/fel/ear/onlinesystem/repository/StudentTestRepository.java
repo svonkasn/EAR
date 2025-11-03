@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentTestRepository extends JpaRepository<StudentTest, Integer> {
     @Query("select avg(st.score) from StudentTest st where st.test.id = :testId")
@@ -37,6 +38,12 @@ public interface StudentTestRepository extends JpaRepository<StudentTest, Intege
         StatusTest getStatus();
         long getCount();
     }
+
+    // get a specific user attempt on a test
+    Optional<StudentTest> findByUserIdAndTestId(Integer userId, Integer testId);
+
+    // number of attempts
+    long countByUserIdAndTestId(Integer userId, Integer testId);
 
     // top N students
     Page<StudentTest> findByTestId(Integer testId, Pageable pageable);

@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface StudentTestRepository extends JpaRepository<StudentTest, Integer> {
-    @Query("select avg(st.score) from StudentTest st where st.test.id = :testId and st.score is not null")
+    @Query("select avg(st.score) from StudentTest st where st.test.id = :testId")
     Double averageScore(@Param("testId") Integer testId);
 
     @Query("select count(st) from StudentTest st where st.test.id = :testId")
@@ -22,7 +22,7 @@ public interface StudentTestRepository extends JpaRepository<StudentTest, Intege
     @Query("select count(distinct st.user.id) from StudentTest st where st.test.id = :testId")
     long distinctStudents(@Param("testId") Integer testId);
 
-    @Query("select st.score from StudentTest st where st.test.id = :testId and st.score is not null order by st.score asc")
+    @Query("select st.score from StudentTest st where st.test.id = :testId order by st.score asc")
     List<Double> scoresSorted(@Param("testId") Integer testId);
 
     @Query("""

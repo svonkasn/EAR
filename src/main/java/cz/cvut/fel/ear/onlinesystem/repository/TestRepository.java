@@ -1,6 +1,7 @@
 package cz.cvut.fel.ear.onlinesystem.repository;
 
 import cz.cvut.fel.ear.onlinesystem.model.Test;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,4 +15,6 @@ public interface TestRepository extends JpaRepository<Test, Integer> {
     @Query("select t from Test t where t.termin.id = :terminId and t.group.id = :groupId")
     Optional<Test> findByTerminAndGroup(@Param("terminId") Integer terminId,
                                         @Param("groupId") Integer groupId);
+    @EntityGraph(attributePaths = {"questions"}) Optional<Test> findWithQuestionsById(Integer id);
+    boolean existsByGroupIdAndTerminId(Integer groupId, Integer terminId);
 }

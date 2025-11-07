@@ -50,8 +50,8 @@ public interface StudentTestRepository extends JpaRepository<StudentTest, Intege
     @EntityGraph(attributePaths = "user")
     Page<StudentTest> findByTestIdAndScoreIsNotNull(Integer testId, Pageable pageable);
 
-    public static Pageable topN(int n) { return PageRequest.of(0, n, Sort.by(Sort.Direction.DESC, "score")); }
-    public static Pageable lowN(int n) { return PageRequest.of(0, n, Sort.by(Sort.Direction.ASC,  "score")); }
+    static Pageable topN(int n) { return PageRequest.of(0, n, Sort.by(Sort.Direction.DESC, "score")); }
+    static Pageable lowN(int n) { return PageRequest.of(0, n, Sort.by(Sort.Direction.ASC,  "score")); }
 
     long countByTestIdAndScoreIsNotNull(Integer testId);
 

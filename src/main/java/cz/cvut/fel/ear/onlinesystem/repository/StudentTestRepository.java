@@ -25,7 +25,7 @@ public interface StudentTestRepository extends JpaRepository<StudentTest, Intege
     long distinctStudents(@Param("testId") Integer testId);
 
     @Query("select st.score from StudentTest st where st.test.id = :testId and st.score is not null order by st.score asc")
-    List<Double> scoresSorted(@Param("testId") Integer testId);
+    List<Integer> scoresSorted(@Param("testId") Integer testId);
 
     @Query("""
            select st.status as status, count(st) as count

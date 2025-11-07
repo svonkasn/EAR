@@ -6,6 +6,11 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 public class StudentAnswer extends AbstractEntity {
+    @Column(name="sel_a") private Boolean selectedA;
+    @Column(name="sel_b") private Boolean selectedB;
+    @Column(name="sel_c") private Boolean selectedC;
+    @Column(name="sel_d") private Boolean selectedD;
+
     @Column(name = "awarded_points")
     private Integer awardedPoints;
 
@@ -62,5 +67,37 @@ public class StudentAnswer extends AbstractEntity {
 
     public void setTeacherNote(String teacherNote) {
         this.teacherNote = teacherNote;
+    }
+
+    public Boolean getSelectedA() {
+        return selectedA;
+    }
+
+    public void setSelectedA(Boolean selectedA) {
+        this.selectedA = selectedA;
+    }
+
+    public Boolean getSelectedB() {
+        return selectedB;
+    }
+
+    public void setSelectedB(Boolean selectedB) {
+        this.selectedB = selectedB;
+    }
+
+    public Boolean getSelectedC() {
+        return selectedC;
+    }
+
+    public void setSelectedC(Boolean selectedC) {
+        this.selectedC = selectedC;
+    }
+
+    public Boolean getSelectedD() {
+        return selectedD;
+    }
+
+    public void setSelectedD(Boolean selectedD) {
+        this.selectedD = selectedD;
     }
 }

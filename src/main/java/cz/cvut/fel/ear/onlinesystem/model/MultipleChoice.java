@@ -103,4 +103,9 @@ public class MultipleChoice extends Question{
     public void setCorrectD(Boolean correctD) {
         this.correctD = correctD;
     }
+
+    public boolean matches(Boolean selA, Boolean selB, Boolean selC, Boolean selD){
+        return eq(selA, correctA) && eq(selB, correctB) && eq(selC, correctC) && eq(selD, correctD);
+    }
+    private static boolean eq(Boolean a, Boolean b){ return Boolean.TRUE.equals(a) == Boolean.TRUE.equals(b); }
 }

@@ -2,6 +2,9 @@ package cz.cvut.fel.ear.onlinesystem.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
@@ -17,6 +20,9 @@ public class StudentTest extends AbstractEntity {
   @ManyToOne(fetch = LAZY, optional = false)
   @JoinColumn(name = "test_id", nullable = false)
   private Test test;
+
+  @OneToMany(mappedBy = "studentTest", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<StudentAnswer> answers = new ArrayList<>();
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status")
@@ -48,5 +54,14 @@ public class StudentTest extends AbstractEntity {
 
   public void setStatus(StatusTest status) {
     this.status = status;
+  }
+
+  public void addAnswer(StudentAnswer a) {
+    answers.add(a);
+    a.setStudentTest(this);
+  }
+  public void removeAnswer(StudentAnswer a) {
+    answers.remove(a);
+    a.setStudentTest(null);
   }
 }

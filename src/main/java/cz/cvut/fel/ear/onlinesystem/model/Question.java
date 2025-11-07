@@ -2,6 +2,9 @@ package cz.cvut.fel.ear.onlinesystem.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
@@ -19,6 +22,8 @@ public class Question extends AbstractEntity{
   @JoinColumn(name = "test_id")
   private Test test;
 
+  @OneToMany(mappedBy = "question")
+  private List<StudentAnswer> answers = new ArrayList<>();
 
   public Integer getPoint() {
     return point;

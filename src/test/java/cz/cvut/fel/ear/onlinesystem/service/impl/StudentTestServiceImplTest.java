@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 @SpringBootTest(classes = {StudentTestServiceImpl.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
 class StudentTestServiceImplTest {
@@ -42,6 +43,10 @@ class StudentTestServiceImplTest {
   @MockitoBean
   private QuestionRepository questionRepo;
 
+  /**
+   * Tests computation of test statistics when valid data is available.
+   * Verifies average, min, max, median, p90, and histogram counts.
+   */
   @Test
   void computeStatsForTest_ValidData_ReturnsCorrectStatistics() {
     // Arrange
@@ -66,6 +71,10 @@ class StudentTestServiceImplTest {
     assertStatusHistogram(stats, StatusTest.EVALUATED, 5L);
   }
 
+  /**
+   * Verifies that tests with multiple student statuses return
+   * the correct histogram breakdown.
+   */
   @Test
   void computeStatsForTest_MultipleStatuses_ReturnsCorrectHistogram() {
     // Arrange
@@ -94,6 +103,9 @@ class StudentTestServiceImplTest {
     assertStatusHistogram(stats, StatusTest.NOT_STARTED, 1L);
   }
 
+  /**
+   * Tests that topN() returns a correct leaderboard ordered by score descending.
+   */
   @Test
   void topN_ValidData_ReturnsLeaderboard() {
     // Arrange
@@ -123,6 +135,9 @@ class StudentTestServiceImplTest {
     assertLeaderboardEntry(result.get(2), 3, 85, "user3", "user3@mail.com");
   }
 
+  /**
+   * Tests that lowN() returns a list of the lowest scores ordered ascending.
+   */
   @Test
   void lowN_ValidData_ReturnsBottomScores() {
     // Arrange
@@ -149,6 +164,10 @@ class StudentTestServiceImplTest {
     assertLeaderboardEntry(result.get(1), 2, 50, "user2", "user2@mail.com");
   }
 
+  /**
+   * Ensures that if there are no graded attempts,
+   * score-related statistics (avg, min, etc.) are null.
+   */
   @Test
   void computeStatsForTest_NoGradedAttempts_ReturnsNullForScoreStatistics() {
     // Arrange
@@ -166,6 +185,8 @@ class StudentTestServiceImplTest {
     assertTrue(stats.statusHistogram().isEmpty());
   }
 
+
+  /** Helper methods for creating entities and setting up mocks. */
   private cz.cvut.fel.ear.onlinesystem.model.Test createTest(int id, int maxPoints, String title) {
     cz.cvut.fel.ear.onlinesystem.model.Test test = new cz.cvut.fel.ear.onlinesystem.model.Test();
     test.setId(id);

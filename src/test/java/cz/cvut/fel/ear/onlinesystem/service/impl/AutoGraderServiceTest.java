@@ -1,6 +1,7 @@
 package cz.cvut.fel.ear.onlinesystem.service.impl;
 
 import cz.cvut.fel.ear.onlinesystem.model.*;
+import org.junit.jupiter.api.Test;
 import cz.cvut.fel.ear.onlinesystem.repository.StudentAnswerRepository;
 import cz.cvut.fel.ear.onlinesystem.repository.StudentTestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +27,19 @@ class AutoGraderServiceTest {
   @MockitoBean
   private StudentTestRepository stRepo;
 
-  @org.junit.jupiter.api.Test
+  /**
+   * Verifies that multiple-choice questions with correct selections
+   * are graded correctly with full points.
+   */
+  @Test
   void gradeClosedQuestions_MultipleChoiceCorrect_GradesCorrectly(){
     // Arrange
     int studentTestId = 1;
-    Test test = createTest(1, 100);
+    cz.cvut.fel.ear.onlinesystem.model.Test test = createTest(1, 100);
     StudentTest studentTest = createStudentTest(studentTestId, null, test);
 
     MultipleChoice mc = createMultipleChoice(1, 10);
-    StudentAnswer answer = createStudentAnswer(1, mc, studentTest, true, false, true, false, null, null);
+    StudentAnswer answer = createStudentAnswer(1, mc, studentTest, true, false, true, false);
 
     List<StudentAnswer> answers = List.of(answer);
 
@@ -48,7 +53,11 @@ class AutoGraderServiceTest {
     assertNotNull(answer.getAwardedPoints());
     verify(answerRepo).saveAll(answers);
   }
-  @org.junit.jupiter.api.Test
+
+  /**
+   * Ensures no exceptions are thrown when grading an empty answer list.
+   */
+  @Test
   void gradeClosedQuestions_EmptyAnswersList_NoErrors() {
     // Arrange
     int studentTestId = 1;
@@ -63,15 +72,19 @@ class AutoGraderServiceTest {
     verify(answerRepo).saveAll(answers);
   }
 
-  @org.junit.jupiter.api.Test
+  /**
+   * Verifies that incorrect multiple-choice answers
+   * are graded with zero points or marked incorrect.
+   */
+  @Test
   void gradeClosedQuestions_MultipleChoiceIncorrect_GradesCorrectly() {
     // Arrange
     int studentTestId = 1;
-    Test test = createTest(1, 100);
+    cz.cvut.fel.ear.onlinesystem.model.Test test = createTest(1, 100);
     StudentTest studentTest = createStudentTest(studentTestId, null, test);
 
     MultipleChoice mc = createMultipleChoice(1, 10);
-    StudentAnswer answer = createStudentAnswer(1, mc, studentTest, false, false, false, false, null, null);
+    StudentAnswer answer = createStudentAnswer(1, mc, studentTest, false, false, false, false);
 
     List<StudentAnswer> answers = List.of(answer);
 
@@ -86,7 +99,9 @@ class AutoGraderServiceTest {
     verify(answerRepo).saveAll(answers);
   }
 
-  private StudentTest createStudentTest(int id, Integer score, Test test) {
+
+  /** Helper methods for test data creation. */
+  private StudentTest createStudentTest(int id, Integer score, cz.cvut.fel.ear.onlinesystem.model.Test test) {
     StudentTest st = new StudentTest();
     st.setId(id);
     st.setScore(score);
@@ -94,8 +109,8 @@ class AutoGraderServiceTest {
     return st;
   }
 
-  private Test createTest(int id, Integer maxPoints) {
-    Test test = new Test();
+  private cz.cvut.fel.ear.onlinesystem.model.Test createTest(int id, Integer maxPoints) {
+    cz.cvut.fel.ear.onlinesystem.model.Test test = new cz.cvut.fel.ear.onlinesystem.model.Test();
     test.setId(id);
     test.setMaxPoints(maxPoints);
     return test;
@@ -109,8 +124,7 @@ class AutoGraderServiceTest {
   }
 
   private StudentAnswer createStudentAnswer(int id, Question question, StudentTest studentTest,
-                                            Boolean selectedA, Boolean selectedB, Boolean selectedC, Boolean selectedD,
-                                            Integer awardedPoints, Boolean correct) {
+                                            Boolean selectedA, Boolean selectedB, Boolean selectedC, Boolean selectedD) {
     StudentAnswer answer = new StudentAnswer();
     answer.setId(id);
     answer.setQuestion(question);
@@ -119,8 +133,6 @@ class AutoGraderServiceTest {
     answer.setSelectedB(selectedB);
     answer.setSelectedC(selectedC);
     answer.setSelectedD(selectedD);
-    answer.setAwardedPoints(awardedPoints);
-    answer.setCorrect(correct);
     return answer;
   }
 }

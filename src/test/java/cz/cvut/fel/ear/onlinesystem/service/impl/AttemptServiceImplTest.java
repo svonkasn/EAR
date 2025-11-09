@@ -33,6 +33,18 @@ class AttemptServiceImplTest {
   @MockitoBean
   private AutoGraderService autoGraderService;
 
+  /**
+   * Integration test for {@link AttemptService#submitAttempt(int, int)}.
+   *
+   * Scenario:
+   *  - A student test is found and currently IN_PROGRESS.
+   *  - There are no open answers left to grade.
+   *
+   * Expected:
+   *  - The attempt is submitted successfully.
+   *  - Auto-grading and score recomputation are triggered.
+   *  - Test status is updated to EVALUATED.
+   */
   @Test
   void submitAttempt_IntergationTest(){
     User u = new User();
@@ -52,6 +64,11 @@ class AttemptServiceImplTest {
     verify(autoGraderService).recomputeTotalScore(1);
     assertEquals(StatusTest.EVALUATED, studentTest.getStatus());
   }
+
+  /**
+   * Verifies that submitting a non-existent test attempt throws a NotFoundException.
+   * Expected: no grading or recomputation occurs.
+   */
   @Test
   void submitAttempt_NotFound_ThrowsException() {
     // Arrange
@@ -65,6 +82,11 @@ class AttemptServiceImplTest {
     verify(autoGraderService, never()).gradeClosedQuestions(anyInt());
     verify(autoGraderService, never()).recomputeTotalScore(anyInt());
   }
+
+  /**
+   * Verifies that submitting an already submitted test (not IN_PROGRESS)
+   * throws a ConflictException and prevents further grading.
+   */
   @Test
   void submitAttempt_NotInProgress_ThrowsConflictException() {
     StudentTest studentTest = new StudentTest();

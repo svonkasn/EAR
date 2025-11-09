@@ -13,6 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Auto-grading service for closed questions (MultipleChoice).
+ * Uses exact-match policy: full points if user's selection matches the key, otherwise 0.
+ */
 @Service
 public class AutoGraderService {
     private final StudentAnswerRepository answerRepo;
@@ -23,6 +27,10 @@ public class AutoGraderService {
         this.stRepo = stRepo;
     }
 
+    /**
+     * Evaluate all closed-question answers for a given attempt.
+     * Open questions are ignored here and graded manually elsewhere.
+     */
     @Transactional
     public void gradeClosedQuestions(int studentTestId) {
         List<StudentAnswer> answers = answerRepo.findByStudentTestId(studentTestId);
@@ -34,11 +42,16 @@ public class AutoGraderService {
                 a.setAwardedPoints(ok ? mc.getPoint() : 0);
             }
         }
+        // Bulk save to persist awarded points and correctness flags
         answerRepo.saveAll(answers);
     }
 
+    /**
+     * Recompute attempt's total score as a sum of awarded points across answers.
+     * The total is clamped to Test.maxPoints (if present).
+     */
     @Transactional
-    public int recomputeTotalScore(int studentTestId) {
+    public void recomputeTotalScore(int studentTestId) {
         StudentTest st = stRepo.findById(studentTestId)
                 .orElseThrow(() -> new NotFoundException("Attempt " + studentTestId + " not found"));
         List<StudentAnswer> answers = answerRepo.findByStudentTestId(studentTestId);
@@ -48,7 +61,6 @@ public class AutoGraderService {
         Integer cap = st.getTest().getMaxPoints();
         if (cap != null) total = Math.min(total, cap);
         st.setScore(total);
-        return total;
     }
 
 }

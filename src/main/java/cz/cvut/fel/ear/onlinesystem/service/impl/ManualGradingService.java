@@ -13,6 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
+/**
+ * Manual grading service for open-ended questions (OpenQuestion).
+ * Validates range and updates attempt status when all open answers are graded.
+ */
 @Service
 public class ManualGradingService {
     private final StudentAnswerRepository answerRepo;
@@ -25,6 +29,15 @@ public class ManualGradingService {
         this.auto = auto;
     }
 
+    /**
+     * Assign points to an open-question answer and optionally attach a teacher note.
+     * Also recomputes attempt's total score.
+     *
+     * @param answerId  StudentAnswer id (must belong to an OpenQuestion)
+     * @param points    awarded points in 0..question.point
+     * @param teacherId id of grading teacher (for audit; currently not stored here)
+     * @param note      optional teacher note (can be null/blank)
+     */
     @Transactional
     public void gradeOpenAnswer(int answerId, int points, int teacherId, String note) {
         StudentAnswer a = answerRepo.findById(answerId)
@@ -45,6 +58,10 @@ public class ManualGradingService {
         auto.recomputeTotalScore(a.getStudentTest().getId());
     }
 
+    /**
+     * If there are no open answers pending manual grading, finalize the attempt.
+     * Sets status to EVALUATED. Does nothing if some open answers remain ungraded.
+     */
     @Transactional
     public void finalizeIfAllGraded(int studentTestId) {
         long pending = answerRepo.countOpenNotGraded(studentTestId);

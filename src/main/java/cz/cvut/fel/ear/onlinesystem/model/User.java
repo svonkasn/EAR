@@ -8,6 +8,7 @@ import java.util.Set;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
+@Table(name = "EAR_USER")
 public class User extends AbstractEntity{
 
   @Basic(optional = false)

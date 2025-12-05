@@ -9,7 +9,6 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 public class StudentTest extends AbstractEntity {
-  @Basic(optional = false)
   @Column(name = "score")
   private Integer score;
 

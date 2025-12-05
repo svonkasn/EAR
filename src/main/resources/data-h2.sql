@@ -57,10 +57,9 @@ VALUES
   (3, 'Inheritance, polymorphism, abstraction, encapsulation', 500);
 
 -- === STUDENT TEST ===
--- TODO SCORE muze byt NULL, neda se to!
 INSERT INTO STUDENT_TEST (ID, SCORE, TEST_ID, USER_ID, STATUS)
 VALUES
-  (1, 0, 1, 3, 'IN_PROGRESS'),
+  (1, NULL, 1, 3, 'IN_PROGRESS'),
   (2, 7,    1, 4, 'EVALUATED');
 
 -- === STUDENT ANSWERS ===

@@ -16,7 +16,7 @@ public class StudentTestController {
     this.studentTestService = studentTestService;
   }
 
-  @GetMapping("{testId}/stats")
+  @GetMapping("/{testId}/stats")
   public TestStats getTestStats(@PathVariable int testId) {
     return studentTestService.computeStatsForTest(testId);
   }

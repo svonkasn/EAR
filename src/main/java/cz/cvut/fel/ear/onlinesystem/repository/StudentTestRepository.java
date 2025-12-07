@@ -47,7 +47,7 @@ public interface StudentTestRepository extends JpaRepository<StudentTest, Intege
     }
 
     /** Single user's attempt for a given test (if such attempt exists). */
-    Optional<StudentTest> findByUserIdAndTestId(Integer userId, Integer testId);
+    List<StudentTest> findByUserIdAndTestId(Integer userId, Integer testId);
 
     /** Number of attempts made by a given user for a given test (useful for maxAttempts checks). */
     long countByUserIdAndTestId(Integer userId, Integer testId);
@@ -75,4 +75,10 @@ public interface StudentTestRepository extends JpaRepository<StudentTest, Intege
     /** Maximum graded score. */
     @Query("select max(st.score) from StudentTest st where st.test.id = :testId and st.score is not null")
     Integer maxScore(@Param("testId") Integer testId);
+
+    List<StudentTest> findByUserId(Integer userId);
+
+    List<StudentTest> findByTestId(Integer testId);
+
+
 }

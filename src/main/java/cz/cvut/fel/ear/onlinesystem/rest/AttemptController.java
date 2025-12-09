@@ -7,14 +7,13 @@ import cz.cvut.fel.ear.onlinesystem.dto.request.StudentTestCreateRequest;
 import cz.cvut.fel.ear.onlinesystem.dto.request.StudentTestUpdateRequest;
 import cz.cvut.fel.ear.onlinesystem.dto.response.StudentTestResponse;
 import cz.cvut.fel.ear.onlinesystem.exception.NotFoundException;
-import cz.cvut.fel.ear.onlinesystem.model.StatusTest;
-import cz.cvut.fel.ear.onlinesystem.model.StudentAnswer;
-import cz.cvut.fel.ear.onlinesystem.model.StudentTest;
+import cz.cvut.fel.ear.onlinesystem.model.*;
 import cz.cvut.fel.ear.onlinesystem.repository.StudentTestRepository;
 import cz.cvut.fel.ear.onlinesystem.repository.TestRepository;
 import cz.cvut.fel.ear.onlinesystem.repository.UserRepository;
 import cz.cvut.fel.ear.onlinesystem.service.AttemptService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,9 +43,9 @@ public class AttemptController {
   /* CREATE */
   @PostMapping
   public StudentTestResponse createAttempt(@RequestBody StudentTestCreateRequest req) {
-    var user = userRepository.findById(req.userId())
+    User user = userRepository.findById(req.userId())
             .orElseThrow(() -> new NotFoundException("User not found"));
-    var test = testRepository.findById(req.testId())
+    Test test = testRepository.findById(req.testId())
             .orElseThrow(() -> new NotFoundException("Test not found"));
 
     StudentTest st = new StudentTest();
@@ -60,6 +59,7 @@ public class AttemptController {
   }
 
   /* READ ONE */
+  @PreAuthorize("hasRole('teacher') or hasRole('admin')")
   @GetMapping("/{id}")
   public StudentTestResponse getAttempt(@PathVariable int id) {
     StudentTest st = studentTestRepository.findById(id)
@@ -68,6 +68,7 @@ public class AttemptController {
   }
 
   /* READ LIST */
+  @PreAuthorize("hasRole('teacher') or hasRole('admin')")
   @GetMapping
   public List<StudentTestResponse> listAttempts(@RequestParam(required = false) Integer userId,
                                                 @RequestParam(required = false) Integer testId) {
@@ -89,6 +90,7 @@ public class AttemptController {
   }
 
   /* UPDATE */
+  @PreAuthorize("hasRole('teacher') or hasRole('admin')")
   @PutMapping("/{id}")
   public StudentTestResponse updateAttempt(@PathVariable int id,
                                            @RequestBody StudentTestUpdateRequest req) {
@@ -103,6 +105,7 @@ public class AttemptController {
   }
 
   /* DELETE */
+  @PreAuthorize("hasRole('admin')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteAttempt(@PathVariable int id) {
     if (!studentTestRepository.existsById(id)) {

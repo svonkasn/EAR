@@ -6,6 +6,7 @@ import cz.cvut.fel.ear.onlinesystem.exception.NotFoundException;
 import cz.cvut.fel.ear.onlinesystem.model.StudentTest;
 import cz.cvut.fel.ear.onlinesystem.repository.StudentTestRepository;
 import cz.cvut.fel.ear.onlinesystem.service.impl.AutoGraderService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,7 @@ public class AutoGraderController {
         this.studentTestMapper = studentTestMapper;
     }
 
+    @PreAuthorize( "hasRole('teacher') or hasRole('admin')")
     @PostMapping("/{attemptId}/grade-closed")
     public StudentTestResponse gradeClosed(@PathVariable int attemptId) {
         autoGraderService.gradeClosedQuestions(attemptId);
@@ -37,6 +39,7 @@ public class AutoGraderController {
         return studentTestMapper.toDto(st);
     }
 
+    @PreAuthorize( "hasRole('teacher') or hasRole('admin')")
     @PostMapping("/{attemptId}/recompute-score")
     public StudentTestResponse recomputeScore(@PathVariable int attemptId) {
         autoGraderService.recomputeTotalScore(attemptId);

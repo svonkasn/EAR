@@ -8,6 +8,7 @@ import cz.cvut.fel.ear.onlinesystem.model.StudentAnswer;
 import cz.cvut.fel.ear.onlinesystem.repository.StudentAnswerRepository;
 import cz.cvut.fel.ear.onlinesystem.service.impl.ManualGradingService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +26,7 @@ public class ManualGradingController {
     this.answerMapper = answerMapper;
   }
 
+  @PreAuthorize("hasRole('teacher')")
   @PostMapping("/{answerId}/grade")
   public StudentAnswerResponse grade(@PathVariable int answerId,
                                      @RequestBody GradeOpenAnswerRequest request) {
@@ -41,6 +43,7 @@ public class ManualGradingController {
     return answerMapper.toDto(a);
   }
 
+  @PreAuthorize("hasRole('teacher')")
   @PostMapping("/attempts/{attemptId}/finalize")
   public ResponseEntity<Void> finalizeAttemptIfAllGraded(@PathVariable int attemptId) {
     manualGradingService.finalizeIfAllGraded(attemptId);

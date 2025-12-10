@@ -1,22 +1,29 @@
 -- === COURSES ===
-INSERT INTO COURSE (ID, CODE, NAME, DESCRIPTION)
+INSERT INTO COURSE (CODE, NAME, DESCRIPTION)
 VALUES
-  (1, 'JAV101', 'Java Basics', 'Introduction to Java'),
-  (2, 'SPR201', 'Spring Boot', 'Spring Boot fundamentals');
+  ('JAV101', 'Java Basics', 'Introduction to Java'),
+  ('SPR201', 'Spring Boot', 'Spring Boot fundamentals');
 
 -- === GROUPS ===
-INSERT INTO GROUP_OF_STUDENT (ID, NUMBER_OF_PARALLEL, COURSE_ID)
+INSERT INTO GROUP_OF_STUDENT (NUMBER_OF_PARALLEL, COURSE_ID)
 VALUES
-  (1, 101, 1),
-  (2, 102, 2);
+  (101, 1),
+  (102, 2);
 
 -- === USERS ===
-INSERT INTO EAR_USER (ID, USERNAME, PASSWORD, EMAIL, ROLE, GROUP_ID)
+INSERT INTO EAR_USER (USERNAME, PASSWORD, EMAIL, ROLE, GROUP_ID)
 VALUES
-  (1, 'admin', 'admin123', 'admin@example.com', 'ADMIN', NULL),
-  (2, 'teacher1', 'teacher123', 'teacher1@example.com', 'TEACHER', 1),
-  (3, 'alice', 'alice123', 'alice@example.com', 'STUDENT', 1),
-  (4, 'bob', 'bob123', 'bob@example.com', 'STUDENT', 1);
+  ('admin', '$2a$10$pEBf.fUvT./PFpmsMY51qOUP2Clq9bnPZpBDqsmVY94kSAKM0otYS', 'admin@example.com', 'ADMIN', NULL),
+  ('teacher1', '$2a$10$.7JVxiNew0Lr9Ht8V85XwOTmrzm5Vj3S6LVHeFq390Lvestxtp9RC', 'teacher1@example.com', 'TEACHER', 1),
+  ('alice', '$2a$10$JxU4ItjR/eUaq1wQjAeYMui0za6hmYgOAopcuGp2xt6iz7h/AyGxy', 'alice@example.com', 'STUDENT', 1),
+  ('bob', '$2a$10$5RYY9YCuSrw6LvwHh6Y4KeuahNz1eg6Hd.6fxSBVww.L2.C2h.I0y', 'bob@example.com', 'STUDENT', 1);
+
+-- === PASSWORDS ===
+    -- admin: admin123
+    -- teacher: teacher123
+    -- alice: alice123
+    -- bob: bob123
+-- =================
 
 -- === TEACHER <-> COURSES (M:N table) ===
 INSERT INTO TEACHER_COURSES (COURSE_ID, TEACHER_ID)
@@ -25,21 +32,21 @@ VALUES
   (2, 2);
 
 -- === TERMIN ===
-INSERT INTO TERMIN (ID, START_TIME, END_TIME)
+INSERT INTO TERMIN (START_TIME, END_TIME)
 VALUES
-  (1, '2024-12-01T09:00:00', '2024-12-01T10:00:00');
+  ('2024-12-01T09:00:00', '2024-12-01T10:00:00');
 
 -- === TESTS ===
-INSERT INTO TEST (ID, TITLE, DESCRIPTION, MAX_POINTS, MAX_ATTEMPTS, TEACHER_ID, COURSE_ID, GROUP_ID, TERMIN_ID)
+INSERT INTO TEST (TITLE, DESCRIPTION, MAX_POINTS, MAX_ATTEMPTS, TEACHER_ID, COURSE_ID, GROUP_ID, TERMIN_ID)
 VALUES
-  (1, 'Java Test 1', 'Basic Java knowledge', 10, 3, 2, 1, 1, 1);
+  ('Java Test 1', 'Basic Java knowledge', 10, 3, 2, 1, 1, 1);
 
 -- === QUESTIONS ===
-INSERT INTO QUESTION (ID, POINT, QUESTION_TEXT, TEST_ID)
+INSERT INTO QUESTION (POINT, QUESTION_TEXT, TEST_ID)
 VALUES
-  (1, 3, 'What is JVM?', 1),
-  (2, 4, 'Which types are primitive?', 1),
-  (3, 3, 'Explain OOP.', 1);
+  (3, 'What is JVM?', 1),
+  (4, 'Which types are primitive?', 1),
+  (3, 'Explain OOP.', 1);
 
 -- === MULTIPLE CHOICE ===
 INSERT INTO MULTIPLE_CHOICE (
@@ -57,10 +64,10 @@ VALUES
   (3, 'Inheritance, polymorphism, abstraction, encapsulation', 500);
 
 -- === STUDENT TEST ===
-INSERT INTO STUDENT_TEST (ID, SCORE, TEST_ID, USER_ID, STATUS)
+INSERT INTO STUDENT_TEST (SCORE, TEST_ID, USER_ID, STATUS)
 VALUES
-  (1, NULL, 1, 3, 'IN_PROGRESS'),
-  (2, 7,    1, 4, 'EVALUATED');
+  (NULL, 1, 3, 'IN_PROGRESS'),
+  (7,    1, 4, 'EVALUATED');
 
 -- === STUDENT ANSWERS ===
 INSERT INTO STUDENT_ANSWER

@@ -44,7 +44,7 @@ public class AttemptServiceImpl implements AttemptService {
         // 1) Auto-grade closed questions (MultipleChoice)
         autoGraderService.gradeClosedQuestions(studentTestId);
 
-        // 2) Recompute total score based on awarded points
+        // 2) Recompute the total score based on awarded points
         autoGraderService.recomputeTotalScore(studentTestId);
 
         // 3) If there are no open answers waiting -> finalize; otherwise mark as SUBMITTED

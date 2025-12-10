@@ -12,8 +12,11 @@ import cz.cvut.fel.ear.onlinesystem.repository.StudentTestRepository;
 import cz.cvut.fel.ear.onlinesystem.repository.TestRepository;
 import cz.cvut.fel.ear.onlinesystem.repository.UserRepository;
 import cz.cvut.fel.ear.onlinesystem.service.AttemptService;
+import cz.cvut.fel.ear.onlinesystem.service.security.SecurityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,21 +29,25 @@ public class AttemptController {
   private final UserRepository userRepository;
   private final TestRepository testRepository;
   private final StudentTestMapper studentTestMapper;
+  private final SecurityService securityService;
 
   public AttemptController(AttemptService attemptService,
                            StudentTestRepository studentTestRepository,
                            UserRepository userRepository,
                            TestRepository testRepository,
-                           StudentTestMapper studentTestMapper) {
+                           StudentTestMapper studentTestMapper,
+                           SecurityService securityService) {
     this.attemptService = attemptService;
     this.studentTestRepository = studentTestRepository;
     this.userRepository = userRepository;
     this.testRepository = testRepository;
     this.studentTestMapper = studentTestMapper;
+    this.securityService = securityService;
   }
 
 
   /* CREATE */
+  @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER') or (hasRole('STUDENT') and #req.userId == @securityService.getCurrentUserId())")
   @PostMapping
   public StudentTestResponse createAttempt(@RequestBody StudentTestCreateRequest req) {
     User user = userRepository.findById(req.userId())
@@ -59,7 +66,7 @@ public class AttemptController {
   }
 
   /* READ ONE */
-  @PreAuthorize("hasRole('teacher') or hasRole('admin')")
+  @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER') or (hasRole('STUDENT') and @securityService.isOwnedAttempt(#id))")
   @GetMapping("/{id}")
   public StudentTestResponse getAttempt(@PathVariable int id) {
     StudentTest st = studentTestRepository.findById(id)
@@ -68,20 +75,36 @@ public class AttemptController {
   }
 
   /* READ LIST */
-  @PreAuthorize("hasRole('teacher') or hasRole('admin')")
+  @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'STUDENT')")
   @GetMapping
   public List<StudentTestResponse> listAttempts(@RequestParam(required = false) Integer userId,
                                                 @RequestParam(required = false) Integer testId) {
+    boolean isStudent = securityService.isCurrentUserStudent();
+
     List<StudentTest> attempts;
 
-    if (userId != null && testId != null) {
-      attempts = studentTestRepository.findByUserIdAndTestId(userId, testId);
-    } else if (userId != null) {
-      attempts = studentTestRepository.findByUserId(userId);
-    } else if (testId != null) {
-      attempts = studentTestRepository.findByTestId(testId);
+    if (isStudent) {
+      Integer currentUserId = securityService.getCurrentUserId();
+
+      if (currentUserId == null) {
+        throw new org.springframework.security.access.AccessDeniedException("Not authenticated");
+      }
+
+      if (testId != null) {
+        attempts = studentTestRepository.findByUserIdAndTestId(currentUserId, testId);
+      }  else {
+        attempts = studentTestRepository.findByUserId(currentUserId);
+      }
     } else {
-      attempts = studentTestRepository.findAll();
+      if (userId != null && testId != null) {
+        attempts = studentTestRepository.findByUserIdAndTestId(userId, testId);
+      } else if (userId != null) {
+        attempts = studentTestRepository.findByUserId(userId);
+      } else if (testId != null) {
+        attempts = studentTestRepository.findByTestId(testId);
+      } else {
+        attempts = studentTestRepository.findAll();
+      }
     }
 
     return attempts.stream()
@@ -90,7 +113,7 @@ public class AttemptController {
   }
 
   /* UPDATE */
-  @PreAuthorize("hasRole('teacher') or hasRole('admin')")
+  @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
   @PutMapping("/{id}")
   public StudentTestResponse updateAttempt(@PathVariable int id,
                                            @RequestBody StudentTestUpdateRequest req) {
@@ -105,7 +128,7 @@ public class AttemptController {
   }
 
   /* DELETE */
-  @PreAuthorize("hasRole('admin')")
+  @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteAttempt(@PathVariable int id) {
     if (!studentTestRepository.existsById(id)) {
@@ -116,12 +139,10 @@ public class AttemptController {
   }
 
   /* SUBMIT */
+  @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER') or (hasRole('STUDENT') and @securityService.isOwnedAttempt(#attemptId))")
   @PostMapping("/{attemptId}/submit")
   public ResponseEntity<Void> submit(@PathVariable int attemptId, @RequestBody AttemptSubmitRequest request) {
     attemptService.submitAttempt(attemptId, request.userId());
     return ResponseEntity.ok().build();
   }
-
-
-
 }

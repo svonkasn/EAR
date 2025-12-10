@@ -8,13 +8,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserDetailsService{
+public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
   private final UserRepository userRepository;
-  private final PasswordEncoder passwordEncoder;
 
-  public UserDetailsService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+  public UserDetailsService(UserRepository userRepository) {
     this.userRepository = userRepository;
-    this.passwordEncoder = passwordEncoder;
   }
 
   public UserDetails loadUserByUsername(String username) {

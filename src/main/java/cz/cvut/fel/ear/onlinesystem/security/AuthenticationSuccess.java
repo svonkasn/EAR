@@ -42,7 +42,7 @@ public class AuthenticationSuccess implements AuthenticationSuccessHandler, Logo
     if (authentication == null) {
       return "";
     }
-    return ((UserDetails) authentication.getPrincipal()).getUsername();
+    return authentication.getName();
   }
 
   @Override

@@ -28,7 +28,7 @@ public class AutoGraderController {
         this.studentTestMapper = studentTestMapper;
     }
 
-    @PreAuthorize( "hasRole('teacher') or hasRole('admin')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @PostMapping("/{attemptId}/grade-closed")
     public StudentTestResponse gradeClosed(@PathVariable int attemptId) {
         autoGraderService.gradeClosedQuestions(attemptId);
@@ -39,7 +39,7 @@ public class AutoGraderController {
         return studentTestMapper.toDto(st);
     }
 
-    @PreAuthorize( "hasRole('teacher') or hasRole('admin')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @PostMapping("/{attemptId}/recompute-score")
     public StudentTestResponse recomputeScore(@PathVariable int attemptId) {
         autoGraderService.recomputeTotalScore(attemptId);

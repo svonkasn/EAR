@@ -26,7 +26,7 @@ public class ManualGradingController {
     this.answerMapper = answerMapper;
   }
 
-  @PreAuthorize("hasRole('teacher')")
+  @PreAuthorize("hasRole('TEACHER')")
   @PostMapping("/{answerId}/grade")
   public StudentAnswerResponse grade(@PathVariable int answerId,
                                      @RequestBody GradeOpenAnswerRequest request) {
@@ -43,7 +43,7 @@ public class ManualGradingController {
     return answerMapper.toDto(a);
   }
 
-  @PreAuthorize("hasRole('teacher')")
+  @PreAuthorize("hasRole('TEACHER')")
   @PostMapping("/attempts/{attemptId}/finalize")
   public ResponseEntity<Void> finalizeAttemptIfAllGraded(@PathVariable int attemptId) {
     manualGradingService.finalizeIfAllGraded(attemptId);

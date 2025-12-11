@@ -1,0 +1,1271 @@
+{
+	"info": {
+		"_postman_id": "ear-online-system-tests",
+		"name": "Online System - REST API Tests",
+		"description": "Postman kolekce pro testování REST API systému online testování.\n\nScénáře zahrnují CRUD operace, automatické hodnocení, ruční hodnocení a statistiky.\n Před spuštěním je nutné:\n1. Spustit aplikaci.\n2. Použít testovací data\n3. Provednout přihlášení",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "noauth"
+	},
+	"item": [
+		{
+			"name": "1. Authentication",
+			"item": [
+				{
+					"name": "Login as Student (alice)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains login status\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('loggedIn');",
+									"    pm.expect(jsonData.loggedIn).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "alice",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "alice123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "Přihlášení studenta „alice“ (heslo: alice123)"
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Teacher (teacher1)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Teacher logged in\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.loggedIn).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "teacher1",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "teacher123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "Přihlášení u4itele „teacher1“ (heslo: teacher123)"
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Admin logged in\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.loggedIn).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "admin123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "Přihlášení admina „admin“ (heslo: admin123)"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"logout"
+							]
+						},
+						"description": "Odhlašní"
+					},
+					"response": []
+				}
+			],
+			"description": "Autentefikace uživateů"
+		},
+		{
+			"name": "2. CRUD - Attempts (Student Tests)",
+			"item": [
+				{
+					"name": "Create Attempt (Student)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Attempt created\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData.status).to.eql('IN_PROGRESS');",
+									"    pm.expect(jsonData.userId).to.eql(3); // alice",
+									"    pm.expect(jsonData.testId).to.eql(1);",
+									"    ",
+									"    pm.collectionVariables.set('attemptId', jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 3,\n    \"testId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts"
+							]
+						},
+						"description": "Vytvoření nového pokusu studenta pro test. Popřipadě TEACHER/ADMIN"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Attempt by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Attempt data returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('status');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts/{{attemptId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts",
+								"{{attemptId}}"
+							]
+						},
+						"description": "Ziskat informaci o pokusech podle ID."
+					},
+					"response": []
+				},
+				{
+					"name": "List All Attempts (Admin/Teacher)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Returns array\", function () {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts"
+							]
+						},
+						"description": "Get attempts. Student vidí jen vlatní pokusy."
+					},
+					"response": []
+				},
+				{
+					"name": "List Attempts by User ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts?userId=3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "3"
+								}
+							]
+						},
+						"description": "Ziskat pokusy studenta Alice (userId=3 = alice)"
+					},
+					"response": []
+				},
+				{
+					"name": "List Attempts by Test ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts?testId=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts"
+							],
+							"query": [
+								{
+									"key": "testId",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get all ettempts after test"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Attempt Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Status updated\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('SUBMITTED');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"SUBMITTED\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts/{{attemptId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts",
+								"{{attemptId}}"
+							]
+						},
+						"description": "Update status attempt. Jen ADMIN/TEACHER."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Attempt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts/{{attemptId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts",
+								"{{attemptId}}"
+							]
+						},
+						"description": "Delete attempt. Jen ADMIN."
+					},
+					"response": []
+				}
+			],
+			"description": "CRUD operace attempt student (StudentTest)"
+		},
+		{
+			"name": "3. Scenario: Complete Test Flow (Auto-grade)",
+			"item": [
+				{
+					"name": "Step 1: Login as Student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Login successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "alice",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "alice123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "Přihlšení studenta na začatku scenáře."
+					},
+					"response": []
+				},
+				{
+					"name": "Step 2: Create New Attempt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Attempt created\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('scenarioAttemptId', jsonData.id);",
+									"    pm.expect(jsonData.status).to.eql('IN_PROGRESS');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							"Content-Type: application/json"
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 3,\n    \"testId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts"
+							]
+						},
+						"description": "Vytvaření nového pokuusu ID=1"
+					},
+					"response": []
+				},
+				{
+					"name": "Step 3: Submit Attempt (triggers auto-grade)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Submission successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							"Content-Type: application/json"
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 3\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts/{{scenarioAttemptId}}/submit",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts",
+								"{{scenarioAttemptId}}",
+								"submit"
+							]
+						},
+						"description": "Odeslání pokusu. Automaticky spustí autograder.(MultipleChoice) a přepočitá body."
+					},
+					"response": []
+				},
+				{
+					"name": "Step 4: Verify Attempt Status and Score",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Attempt status updated\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    pm.expect(['SUBMITTED', 'EVALUATED']).to.include(jsonData.status);",
+									"    ",
+									"    if (jsonData.status === 'EVALUATED') {",
+									"        pm.expect(jsonData.score).to.not.be.null;",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts/{{scenarioAttemptId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts",
+								"{{scenarioAttemptId}}"
+							]
+						},
+						"description": "Kontrola status po autohodnocení"
+					},
+					"response": []
+				}
+			],
+			"description": "Kompletní scénář absolvování testu s automatickým hodnocením:\n\nStudent se přihlásí\n\nVytvoří pokus\n\nOdešle pokus (autograder se spustí automaticky)\n\nZkontroluje výsledek"
+		},
+		{
+			"name": "4. Auto-Grader Endpoints",
+			"item": [
+				{
+					"name": "Grade Closed Questions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Grading successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains attempt data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/autograder/{{attemptId}}/grade-closed",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"autograder",
+								"{{attemptId}}",
+								"grade-closed"
+							]
+						},
+						"description": "Ruční hodnocení otevřené otázky (MultipleChoice). Jen ADMIN/TEACHER."
+					},
+					"response": []
+				},
+				{
+					"name": "Recompute Total Score",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Recomputation successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Score recalculated\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('score');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/autograder/{{attemptId}}/recompute-score",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"autograder",
+								"{{attemptId}}",
+								"recompute-score"
+							]
+						},
+						"description": "Přepočet skóre. Pouze pro ADMIN/TEACHER."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpointy pro automatické hodnocení uzavřených otázek."
+		},
+		{
+			"name": "5. Scenario: Manual Grading Flow",
+			"item": [
+				{
+					"name": "Step 1: Login as Teacher",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Teacher logged in\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "teacher1",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "teacher123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "Prihlašní učitele pro ruční hodnocení "
+					},
+					"response": []
+				},
+				{
+					"name": "Step 2: Grade Open Answer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Grading successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Answer graded\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('awardedPoints');",
+									"    pm.expect(jsonData.awardedPoints).to.eql(3);",
+									"    pm.expect(jsonData.correct).to.eql(true);",
+									"    pm.expect(jsonData.teacherNote).to.eql('Good explanation');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"points\": 3,\n    \"teacherId\": 2,\n    \"note\": \"Good explanation\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rest/answers/1/grade",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"answers",
+								"1",
+								"grade"
+							]
+						},
+						"description": "Ruční hodnocení otevřené otázky (OpenQuestion). Změní stav na EVALUATED.\nUloží body a komentář učitele. Automaticky přepočítá celkové skóre pokusu"
+					},
+					"response": []
+				},
+				{
+					"name": "Step 3: Finalize Attempt (if all graded)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Finalization successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/answers/attempts/{{attemptId}}/finalize",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"answers",
+								"attempts",
+								"{{attemptId}}",
+								"finalize"
+							]
+						},
+						"description": "Pokud vše je ohodnoceno. Změní se status na EVALUATED."
+					},
+					"response": []
+				},
+				{
+					"name": "Step 4: Verify Final Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is EVALUATED\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    if (jsonData.status === 'EVALUATED') {",
+									"        pm.expect(jsonData.score).to.not.be.null;",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts/{{attemptId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts",
+								"{{attemptId}}"
+							]
+						},
+						"description": "Kontrola finálního stavu a skóre po ručním hodnocení"
+					},
+					"response": []
+				}
+			],
+			"description": "Scénář ručního hodnocení otevřených otázek:\n\nUčitel se přihlásí\n\nOhodnotí otevřenou otázku s komentářem\n\nFinalizuje pokus (pokud jsou všechny otázky ohodnoceny)\n\nZkontroluje finální výsledek"
+		},
+		{
+			"name": "6. Statistics & Leaderboards",
+			"item": [
+				{
+					"name": "Get Test Statistics",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Statistics retrieved\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Stats contain required fields\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('testId');",
+									"    pm.expect(jsonData).to.have.property('attempts');",
+									"    pm.expect(jsonData).to.have.property('distinctStudents');",
+									"    pm.expect(jsonData).to.have.property('averageScore');",
+									"    pm.expect(jsonData).to.have.property('statusHistogram');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/tests/1/stats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"tests",
+								"1",
+								"stats"
+							]
+						},
+						"description": "Získání statistik testu: počet pokusů, počet unikátních studentů, průměr/min/max/medián skóre, percentil P90, histogram podle stavů. Pouze pro ADMIN/TEACHER."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Top N Leaderboard",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Leaderboard retrieved\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Returns array\", function () {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Leaderboard entries have required fields\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.length > 0) {",
+									"        pm.expect(jsonData[0]).to.have.property('rank');",
+									"        pm.expect(jsonData[0]).to.have.property('score');",
+									"        pm.expect(jsonData[0]).to.have.property('username');",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/tests/1/top?number=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"tests",
+								"1",
+								"top"
+							],
+							"query": [
+								{
+									"key": "number",
+									"value": "10",
+									"description": "Počet nejlepších výsledků"
+								}
+							]
+						},
+						"description": "Počet nejlepších výsledků"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Low N Leaderboard",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Low leaderboard retrieved\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Returns array\", function () {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/tests/1/low?number=5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"tests",
+								"1",
+								"low"
+							],
+							"query": [
+								{
+									"key": "number",
+									"value": "5",
+									"description": "Počet nejhorších výsledků"
+								}
+							]
+						},
+						"description": "Získání bottom-N výsledků (seřazených podle skóre vzestupně). Pouze pro ADMIN/TEACHER."
+					},
+					"response": []
+				}
+			],
+			"description": "Statistiky a žebříčky pro testy"
+		},
+		{
+			"name": "7. Error Scenarios",
+			"item": [
+				{
+					"name": "Create Attempt - Unauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Unauthorized access denied\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 3,\n    \"testId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts"
+							]
+						},
+						"description": "Pokus vytvořit pokus bez autorizace musí vrátit 401"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Non-existent Attempt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Not found error\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Error message present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts/99999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts",
+								"99999"
+							]
+						},
+						"description": "Dotaz na neexistující pokus musí vrátit 404"
+					},
+					"response": []
+				},
+				{
+					"name": "Submit Attempt - Wrong Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Conflict error\", function () {",
+									"    pm.response.to.have.status(409);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 3\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rest/attempts/2/submit",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"attempts",
+								"2",
+								"submit"
+							]
+						},
+						"description": "Pokus o odeslání již odeslaného pokusu (stav není IN_PROGRESS) musí vrátit 409 Conflict."
+					},
+					"response": []
+				},
+				{
+					"name": "Grade Open Answer - Invalid Points",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validation error\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"points\": 999,\n    \"teacherId\": 2,\n    \"note\": \"Invalid points\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rest/answers/1/grade",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rest",
+								"answers",
+								"1",
+								"grade"
+							]
+						},
+						"description": "Pokus přidělit body vyšší než maximum otázky musí vrátit 400 – validační chyba"
+					},
+					"response": []
+				}
+			],
+			"description": "Scénáře zpracování chyb"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "attemptId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "scenarioAttemptId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+

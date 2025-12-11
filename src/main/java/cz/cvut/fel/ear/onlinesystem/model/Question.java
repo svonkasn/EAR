@@ -18,11 +18,16 @@ public class Question extends AbstractEntity{
   @Column(name = "questionText", nullable = false)
   private String questionText;
 
+  @Basic(optional = false)
+  @Column(name = "question_order")
+  private Integer questionOrder;
+
   @ManyToOne(fetch = LAZY, optional = false)
   @JoinColumn(name = "test_id")
   private Test test;
 
   @OneToMany(mappedBy = "question")
+  @OrderBy("answerOrder ASC")
   private List<StudentAnswer> answers = new ArrayList<>();
 
   public Integer getPoint() {

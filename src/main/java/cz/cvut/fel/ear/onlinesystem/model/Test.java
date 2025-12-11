@@ -42,6 +42,7 @@ public class Test extends AbstractEntity {
   private Termin termin;
 
   @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OrderBy("questionOrder ASC")
   private List<Question> questions = new ArrayList<>();
 
   public String getTitle() {

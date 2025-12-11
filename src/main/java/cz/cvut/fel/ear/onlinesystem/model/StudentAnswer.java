@@ -21,6 +21,10 @@ public class StudentAnswer extends AbstractEntity {
     @Column(name = "teacher_note")
     private String teacherNote;
 
+    @Basic(optional = false)
+    @Column(name = "answer_order")
+    private Integer answerOrder;
+
     @ManyToOne(optional = false, fetch = LAZY)
     @JoinColumn(name = "student_test_id")
     private StudentTest studentTest;

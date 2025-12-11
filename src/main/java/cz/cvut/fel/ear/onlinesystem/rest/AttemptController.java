@@ -91,13 +91,13 @@ public class AttemptController {
       }
 
       if (testId != null) {
-        attempts = studentTestRepository.findByUserIdAndTestId(currentUserId, testId);
+        attempts = studentTestRepository.findByUserAndTest(currentUserId, testId);
       }  else {
         attempts = studentTestRepository.findByUserId(currentUserId);
       }
     } else {
       if (userId != null && testId != null) {
-        attempts = studentTestRepository.findByUserIdAndTestId(userId, testId);
+        attempts = studentTestRepository.findByUserAndTest(userId, testId);
       } else if (userId != null) {
         attempts = studentTestRepository.findByUserId(userId);
       } else if (testId != null) {

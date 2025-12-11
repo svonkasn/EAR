@@ -8,6 +8,14 @@ import java.util.List;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
+@NamedQuery(
+  name = "StudentTest.findGraded",
+  query = "SELECT st FROM StudentTest st WHERE st.score IS NOT NULL AND st.test.id = :id"
+)
+@NamedQuery(
+  name = "StudentTest.findByUserAndTest",
+  query = "SELECT st FROM StudentTest st WHERE st.user.id = :userId AND st.test.id = :testId"
+)
 public class StudentTest extends AbstractEntity {
   @Column(name = "score")
   private Integer score;

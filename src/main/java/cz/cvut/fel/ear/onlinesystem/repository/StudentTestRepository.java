@@ -12,10 +12,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface StudentTestRepository extends JpaRepository<StudentTest, Integer> {
-    /** Average score among graded attempts (score is not null). */
+    List<StudentTest> findGraded(@Param("id") Integer id);
+
+  /** Average score among graded attempts (score is not null). */
     @Query("select avg(st.score) from StudentTest st where st.test.id = :testId and st.score is not null")
     Double averageScore(@Param("testId") Integer testId);
 
@@ -47,7 +48,7 @@ public interface StudentTestRepository extends JpaRepository<StudentTest, Intege
     }
 
     /** Single user's attempt for a given test (if such attempt exists). */
-    List<StudentTest> findByUserIdAndTestId(Integer userId, Integer testId);
+    List<StudentTest> findByUserAndTest(@Param("userId") int userId, @Param("testId") int testId);
 
     /** Number of attempts made by a given user for a given test (useful for maxAttempts checks). */
     long countByUserIdAndTestId(Integer userId, Integer testId);

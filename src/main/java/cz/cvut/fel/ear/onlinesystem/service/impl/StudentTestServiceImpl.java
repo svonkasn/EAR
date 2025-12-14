@@ -1,123 +1,146 @@
 package cz.cvut.fel.ear.onlinesystem.service.impl;
 
-import cz.cvut.fel.ear.onlinesystem.dto.LeaderboardEntry;
-import cz.cvut.fel.ear.onlinesystem.dto.StatusBucket;
-import cz.cvut.fel.ear.onlinesystem.dto.TestStats;
+import cz.cvut.fel.ear.onlinesystem.dto.request.StudentTestCreateRequest;
+import cz.cvut.fel.ear.onlinesystem.dto.request.StudentTestUpdateRequest;
+import cz.cvut.fel.ear.onlinesystem.exception.ConflictException;
 import cz.cvut.fel.ear.onlinesystem.exception.NotFoundException;
+import cz.cvut.fel.ear.onlinesystem.model.StatusTest;
 import cz.cvut.fel.ear.onlinesystem.model.StudentTest;
 import cz.cvut.fel.ear.onlinesystem.model.Test;
 import cz.cvut.fel.ear.onlinesystem.model.User;
-import cz.cvut.fel.ear.onlinesystem.repository.QuestionRepository;
+import cz.cvut.fel.ear.onlinesystem.repository.StudentAnswerRepository;
 import cz.cvut.fel.ear.onlinesystem.repository.StudentTestRepository;
 import cz.cvut.fel.ear.onlinesystem.repository.TestRepository;
+import cz.cvut.fel.ear.onlinesystem.repository.UserRepository;
 import cz.cvut.fel.ear.onlinesystem.service.StudentTestService;
-import org.springframework.data.domain.Page;
+import cz.cvut.fel.ear.onlinesystem.service.security.SecurityService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class StudentTestServiceImpl implements StudentTestService {
 
-    private final StudentTestRepository studentTestRepo;
-    private final TestRepository testRepo;
-    private final QuestionRepository questionRepo;
+    private final StudentTestRepository studentTestRepository;
+    private final StudentAnswerRepository answerRepo;
+    private final UserRepository userRepository;
+    private final TestRepository testRepository;
+    private final SecurityService securityService;
+    private final AutoGraderService autoGraderService;
 
-    public StudentTestServiceImpl(StudentTestRepository studentTestRepo, TestRepository testRepo, QuestionRepository questionRepo) {
-        this.studentTestRepo = studentTestRepo;
-        this.testRepo = testRepo;
-        this.questionRepo = questionRepo;
+    public StudentTestServiceImpl(StudentTestRepository studentTestRepository, StudentAnswerRepository answerRepo, AutoGraderService autoGraderService,
+                                  UserRepository userRepository, TestRepository testRepository, SecurityService securityService) {
+        this.studentTestRepository = studentTestRepository;
+        this.answerRepo = answerRepo;
+        this.autoGraderService = autoGraderService;
+        this.userRepository = userRepository;
+        this.testRepository = testRepository;
+        this.securityService = securityService;
     }
 
     @Override
-    public TestStats computeStatsForTest(int testId) {
-        // Load test metadata (maxPoints etc.)
-        Test test = testRepo.findById(testId).orElseThrow(()-> new NotFoundException("Test with id " + testId + " not found"));
+    public void submitAttempt(int studentTestId, int currentUserId) {
+        // Load attempt or fail fast
+        StudentTest st = studentTestRepository.findById(studentTestId)
+                .orElseThrow(() -> new NotFoundException("Attempt " + studentTestId + " not found"));
 
-        // Aggregates
-        long attempts = studentTestRepo.attemptsCount(testId);
-        long distinct = studentTestRepo.distinctStudents(testId);
-        Double avg = studentTestRepo.averageScore(testId);
-        Integer min = studentTestRepo.minScore(testId);
-        Integer max = studentTestRepo.maxScore(testId);
-
-        // Status histogram (NOT_STARTED / IN_PROGRESS / SUBMITTED / EVALUATED)
-        List<StatusBucket> buckets = studentTestRepo.statusHistogram(testId).stream()
-                .map(v -> new StatusBucket(v.getStatus(), v.getCount())).toList();
-
-        // Sum of question points
-        Integer sumPoints = questionRepo.sumPoints(testId);
-
-        // Median / P90 computed in-memory using a pre-sorted score list
-        long graded = studentTestRepo.countByTestIdAndScoreIsNotNull(testId);
-        List<Integer> sorted = graded == 0 ? List.of() : studentTestRepo.scoresSorted(testId);
-        Integer median = median(sorted);
-        Integer p90 = percentile(sorted);
-
-        // Cap metrics by test.getMaxPoints() just in case (defensive)
-        return new TestStats(
-                testId,
-                attempts,
-                distinct,
-                test.getMaxPoints(),
-                sumPoints,
-                avg,
-                min,
-                median == null ? null : Math.min(median, test.getMaxPoints()),
-                p90 == null ? null : Math.min(p90, test.getMaxPoints()),
-                max,
-                buckets);
-    }
-
-    @Override
-    public List<LeaderboardEntry> topN(int testId, int n) {
-        return toLeaderboard(studentTestRepo.findByTestIdAndScoreIsNotNull(testId, StudentTestRepository.topN(n)));
-    }
-
-    @Override
-    public List<LeaderboardEntry> lowN(int testId, int n) {
-        return toLeaderboard(studentTestRepo.findByTestIdAndScoreIsNotNull(testId, StudentTestRepository.lowN(n)));
-    }
-
-    /** Simple median on an ascending sorted list of Integer scores. */
-    private static Integer median(List<Integer> sorted) {
-        if (sorted == null || sorted.isEmpty()) return null;
-        int n = sorted.size();
-        if ((n & 1) == 1) return sorted.get(n / 2);
-        return (sorted.get(n / 2 - 1) + sorted.get(n / 2)) / 2;
-    }
-
-    /** Nearest-rank percentile on an ascending sorted list of Integer scores. */
-    private static Integer percentile(List<Integer> sorted) {
-        if (sorted == null || sorted.isEmpty()) return null;
-        int n = sorted.size();
-        int rank = (int) Math.ceil((90 / 100.0) * n);
-        rank = Math.max(1, Math.min(rank, n));
-        return sorted.get(rank - 1);
-    }
-
-    /**
-     * Map a paged list of attempts to leaderboard entries.
-     * Rank continues across pages: rank = page * size + index + 1.
-     */
-    private static List<LeaderboardEntry> toLeaderboard(Page<StudentTest> page) {
-        List<StudentTest> items = page.getContent();
-        List<LeaderboardEntry> result = new ArrayList<>(items.size());
-
-        int rank = page.getNumber() * page.getSize() + 1;
-        for (StudentTest st : items) {
-            User u = st.getUser(); // user is pre-fetched via @EntityGraph on repository method
-            result.add(new LeaderboardEntry(
-                    rank++,
-                    u.getId(),
-                    u.getUsername(),
-                    u.getEmail(),
-                    st.getScore()
-            ));
+        // Ownership check: only owner (or admin via higher layer) can submit the attempt
+        if (st.getUser() != null && st.getUser().getId() != null
+                && !st.getUser().getId().equals(currentUserId)) {
+            throw new ConflictException("You cannot submit someone else's attempt");
         }
-        return result;
+
+        // Business state check
+        if (st.getStatus() != StatusTest.IN_PROGRESS) {
+            throw new ConflictException("Attempt is not in progress");
+        }
+
+        // 1) Auto-grade closed questions (MultipleChoice)
+        autoGraderService.gradeClosedQuestions(studentTestId);
+
+        // 2) Recompute the total score based on awarded points
+        autoGraderService.recomputeTotalScore(studentTestId);
+
+        // 3) If there are no open answers waiting -> finalize; otherwise mark as SUBMITTED
+        long pending = answerRepo.countOpenNotGraded(studentTestId);
+        st.setStatus(pending == 0 ? StatusTest.EVALUATED : StatusTest.SUBMITTED);
     }
+
+    @Override
+    public StudentTest create(StudentTestCreateRequest req) {
+        User user = userRepository.findById(req.userId())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        Test test = testRepository.findById(req.testId())
+                .orElseThrow(() -> new NotFoundException("Test not found"));
+
+        StudentTest st = new StudentTest();
+        st.setUser(user);
+        st.setTest(test);
+        st.setStatus(StatusTest.IN_PROGRESS);
+        st.setScore(null);
+
+        return studentTestRepository.save(st);
+    }
+
+    @Override
+    public StudentTest get(int id) {
+        return studentTestRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Attempt not found"));
+    }
+
+    @Override
+    public StudentTest update(int id, StudentTestUpdateRequest req) {
+        StudentTest st = studentTestRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Attempt not found"));
+
+        if (req.status() != null) {
+            st.setStatus(StatusTest.valueOf(req.status()));
+        }
+        return studentTestRepository.save(st);
+    }
+
+    @Override
+    public void delete(int id) {
+        if (!studentTestRepository.existsById(id)) {
+            throw new NotFoundException("Attempt not found");
+        }
+        studentTestRepository.deleteById(id);
+    }
+
+    @Override
+    public List<StudentTest> listAttemptsForStudents(Integer userId, Integer testId) {
+        List<StudentTest> attempts;
+
+        Integer currentUserId = securityService.getCurrentUserId();
+
+        if (testId != null) {
+            attempts = studentTestRepository.findByUserIdAndTestId(currentUserId, testId);
+        }  else {
+            attempts = studentTestRepository.findByUserId(currentUserId);
+        }
+
+        return attempts;
+    }
+
+    @Override
+    public List<StudentTest> listAttempts(Integer userId, Integer testId) {
+
+        List<StudentTest> attempts;
+
+        if (userId != null && testId != null) {
+            attempts = studentTestRepository.findByUserIdAndTestId(userId, testId);
+        } else if (userId != null) {
+            attempts = studentTestRepository.findByUserId(userId);
+        } else if (testId != null) {
+            attempts = studentTestRepository.findByTestId(testId);
+        } else {
+            attempts = studentTestRepository.findAll();
+        }
+
+        return attempts;
+
+    }
+
 }

@@ -29,8 +29,12 @@ public interface TestRepository extends JpaRepository<Test, Integer> {
      */
     @EntityGraph(attributePaths = {"questions"}) Optional<Test> findWithQuestionsById(Integer id);
 
-    /**
-     * Fast existence check to prevent duplicates for (group, termin) scheduling.
-     */
-    boolean existsByGroupIdAndTerminId(Integer groupId, Integer terminId);
+    @Query("""
+select (count(t) > 0)
+from Test t
+where t.group.id = :groupId and t.termin.id = :terminId
+""")
+    boolean existsByGroupAndTermin(@Param("groupId") Integer groupId,
+                                   @Param("terminId") Integer terminId);
+
 }

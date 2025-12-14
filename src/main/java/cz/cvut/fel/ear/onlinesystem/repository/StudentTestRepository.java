@@ -48,7 +48,7 @@ public interface StudentTestRepository extends JpaRepository<StudentTest, Intege
     }
 
     /** Single user's attempt for a given test (if such attempt exists). */
-    List<StudentTest> findByUserAndTest(@Param("userId") int userId, @Param("testId") int testId);
+    List<StudentTest> findByUserIdAndTestId(@Param("userId") int userId, @Param("testId") int testId);
 
     /** Number of attempts made by a given user for a given test (useful for maxAttempts checks). */
     long countByUserIdAndTestId(Integer userId, Integer testId);

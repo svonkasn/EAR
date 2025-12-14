@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("rest/attempts")
+@RequestMapping("/rest/attempts")
 public class StudentTestController {
   private final StudentTestService studentTestService;
   private final StudentTestMapper studentTestMapper;

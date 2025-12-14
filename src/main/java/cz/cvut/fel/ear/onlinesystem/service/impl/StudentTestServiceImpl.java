@@ -4,10 +4,7 @@ import cz.cvut.fel.ear.onlinesystem.dto.request.StudentTestCreateRequest;
 import cz.cvut.fel.ear.onlinesystem.dto.request.StudentTestUpdateRequest;
 import cz.cvut.fel.ear.onlinesystem.exception.ConflictException;
 import cz.cvut.fel.ear.onlinesystem.exception.NotFoundException;
-import cz.cvut.fel.ear.onlinesystem.model.StatusTest;
-import cz.cvut.fel.ear.onlinesystem.model.StudentTest;
-import cz.cvut.fel.ear.onlinesystem.model.Test;
-import cz.cvut.fel.ear.onlinesystem.model.User;
+import cz.cvut.fel.ear.onlinesystem.model.*;
 import cz.cvut.fel.ear.onlinesystem.repository.StudentAnswerRepository;
 import cz.cvut.fel.ear.onlinesystem.repository.StudentTestRepository;
 import cz.cvut.fel.ear.onlinesystem.repository.TestRepository;
@@ -57,15 +54,19 @@ public class StudentTestServiceImpl implements StudentTestService {
             throw new ConflictException("Attempt is not in progress");
         }
 
-        // 1) Auto-grade closed questions (MultipleChoice)
         autoGraderService.gradeClosedQuestions(studentTestId);
 
-        // 2) Recompute the total score based on awarded points
-        autoGraderService.recomputeTotalScore(studentTestId);
-
-        // 3) If there are no open answers waiting -> finalize; otherwise mark as SUBMITTED
         long pending = answerRepo.countOpenNotGraded(studentTestId);
-        st.setStatus(pending == 0 ? StatusTest.EVALUATED : StatusTest.SUBMITTED);
+
+        if (pending == 0) {
+            autoGraderService.recomputeTotalScore(studentTestId);
+            st.setStatus(StatusTest.EVALUATED);
+        } else {
+            st.setScore(null);
+            st.setStatus(StatusTest.SUBMITTED);
+        }
+
+        studentTestRepository.save(st);
     }
 
     @Override
@@ -81,7 +82,27 @@ public class StudentTestServiceImpl implements StudentTestService {
         st.setStatus(StatusTest.IN_PROGRESS);
         st.setScore(null);
 
-        return studentTestRepository.save(st);
+        st = studentTestRepository.save(st);
+
+        int order = 1;
+        for (Question q : test.getQuestions()) {
+            StudentAnswer a = new StudentAnswer();
+            a.setStudentTest(st);
+            a.setQuestion(q);
+            a.setAnswerOrder(order++);
+
+            a.setAwardedPoints(null);
+            a.setCorrect(null);
+            a.setTeacherNote(null);
+            a.setSelectedA(null);
+            a.setSelectedB(null);
+            a.setSelectedC(null);
+            a.setSelectedD(null);
+
+            answerRepo.save(a);
+        }
+
+        return st;
     }
 
     @Override

@@ -104,4 +104,12 @@ public class StudentAnswer extends AbstractEntity {
     public void setSelectedD(Boolean selectedD) {
         this.selectedD = selectedD;
     }
+
+    public void setAnswerOrder(Integer answerOrder) {
+        this.answerOrder = answerOrder;
+    }
+
+    public Integer getAnswerOrder() {
+        return answerOrder;
+    }
 }

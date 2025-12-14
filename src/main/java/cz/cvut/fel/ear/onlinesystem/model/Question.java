@@ -53,4 +53,8 @@ public class Question extends AbstractEntity{
   public void setTest(Test test) {
     this.test = test;
   }
+
+  public void setQuestionOrder(Integer questionOrder) {
+    this.questionOrder = questionOrder;
+  }
 }

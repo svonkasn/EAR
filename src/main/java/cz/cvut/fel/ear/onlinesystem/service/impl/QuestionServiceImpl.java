@@ -36,6 +36,7 @@ public class QuestionServiceImpl implements QuestionService {
         q.setQuestionText(req.questionText());
         q.setExpectedAnswer(req.expectedAnswer());
         q.setMaxLength(req.maxLength());
+        q.setQuestionOrder(test.getQuestions().size() + 1);
 
         attach(test, q);
         recalcMaxPoints(test);
@@ -65,6 +66,8 @@ public class QuestionServiceImpl implements QuestionService {
         q.setCorrectD(req.correctD());
 
         q.setMultipleCorrect(req.multipleCorrect());
+
+        q.setQuestionOrder(test.getQuestions().size() + 1);
 
         attach(test, q);
         recalcMaxPoints(test);

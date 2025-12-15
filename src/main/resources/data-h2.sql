@@ -21,13 +21,13 @@ VALUES
   ('admin', '$2a$10$pEBf.fUvT./PFpmsMY51qOUP2Clq9bnPZpBDqsmVY94kSAKM0otYS', 'admin@example.com', 'ADMIN', NULL),
 
   ('teacher1', '$2a$10$.7JVxiNew0Lr9Ht8V85XwOTmrzm5Vj3S6LVHeFq390Lvestxtp9RC', 'teacher1@example.com', 'TEACHER', 1),
-  ('teacher2','$2a$10$pEBf.fUvT./PFpmsMY51qOUP2Clq9bnPZpBDqsmVY94kSAKM0otYS', 'teacher2@example.com','TEACHER', 2),
+  ('teacher2','$2a$10$.7JVxiNew0Lr9Ht8V85XwOTmrzm5Vj3S6LVHeFq390Lvestxtp9RC', 'teacher2@example.com','TEACHER', 2),
 
   ('alice', '$2a$10$JxU4ItjR/eUaq1wQjAeYMui0za6hmYgOAopcuGp2xt6iz7h/AyGxy', 'alice@example.com', 'STUDENT', 1),
   ('bob', '$2a$10$5RYY9YCuSrw6LvwHh6Y4KeuahNz1eg6Hd.6fxSBVww.L2.C2h.I0y', 'bob@example.com', 'STUDENT', 1),
-  ('carol',   '$2a$10$pEBf.fUvT./PFpmsMY51qOUP2Clq9bnPZpBDqsmVY94kSAKM0otYS', 'carol@example.com',   'STUDENT', 2),
-  ('dave',    '$2a$10$pEBf.fUvT./PFpmsMY51qOUP2Clq9bnPZpBDqsmVY94kSAKM0otYS', 'dave@example.com',    'STUDENT', 2),
-  ('erin',    '$2a$10$pEBf.fUvT./PFpmsMY51qOUP2Clq9bnPZpBDqsmVY94kSAKM0otYS', 'erin@example.com',    'STUDENT', 3);
+  ('carol',   '$2a$10$73iRmzHVVx4EwN2XvCC1AOtZv20FZ2KaFpcMjXu6G2apPKOQ6bcB.', 'carol@example.com',   'STUDENT', 2),
+  ('dave',    '$2a$10$.mi/jk52HKsam6CCjVK6vucI5cND8IIqPlmDCYiP3UkSURmSdPaBi', 'dave@example.com',    'STUDENT', 2),
+  ('erin',    '$2a$10$UTmc2Sq.F3BrZQYWD7gyu.92w20qbp3jAWtX2GuSy/vE.2VR0XFJm', 'erin@example.com',    'STUDENT', 3);
 
 -- === PASSWORDS ===
     -- admin: admin123

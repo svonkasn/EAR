@@ -131,18 +131,9 @@ public class StudentTestServiceImpl implements StudentTestService {
     }
 
     @Override
-    public List<StudentTest> listAttemptsForStudents(Integer userId, Integer testId) {
-        List<StudentTest> attempts;
-
+    public List<StudentTest> listAttemptsForStudents(Integer testId) {
         Integer currentUserId = securityService.getCurrentUserId();
-
-        if (testId != null) {
-            attempts = studentTestRepository.findByUserIdAndTestId(currentUserId, testId);
-        }  else {
-            attempts = studentTestRepository.findByUserId(currentUserId);
-        }
-
-        return attempts;
+        return studentTestRepository.findByUserIdAndTestId(currentUserId, testId);
     }
 
     @Override

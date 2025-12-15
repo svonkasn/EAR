@@ -30,7 +30,7 @@ public interface StudentTestService {
     StudentTest update(int id, StudentTestUpdateRequest req);
     void delete(int id);
 
-    List<StudentTest> listAttemptsForStudents(Integer userId, Integer testId);
+    List<StudentTest> listAttemptsForStudents(Integer testId);
     List<StudentTest> listAttempts(Integer userId, Integer testId);
 
 }

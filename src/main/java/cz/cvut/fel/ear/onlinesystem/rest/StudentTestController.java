@@ -10,6 +10,7 @@ import cz.cvut.fel.ear.onlinesystem.model.*;
 import cz.cvut.fel.ear.onlinesystem.service.StudentTestService;
 import cz.cvut.fel.ear.onlinesystem.service.security.SecurityService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,28 +49,23 @@ public class StudentTestController {
   }
 
   /* READ LIST */
-  @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'STUDENT')")
+  @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
   @GetMapping
-  public List<StudentTestResponse> listAttempts(@RequestParam(required = false) Integer userId,
-                                                @RequestParam(required = false) Integer testId) {
-    boolean isStudent = securityService.isCurrentUserStudent();
-    Integer currentUserId = securityService.getCurrentUserId();
+  public List<StudentTestResponse> listAttempts(
+          @RequestParam(required = false) Integer userId,
+          @RequestParam(required = false) Integer testId
+  ) {
+    return studentTestService.listAttempts(userId, testId).stream()
+            .map(studentTestMapper::toDto)
+            .toList();
+  }
 
-    if (currentUserId == null) {
-      throw new org.springframework.security.access.AccessDeniedException("Not authenticated");
-    }
-
-    if (isStudent) {
-      return studentTestService.listAttemptsForStudents(userId, testId)
-              .stream()
-              .map(studentTestMapper::toDto)
-              .toList();
-    } else {
-      return studentTestService.listAttempts(userId, testId)
-              .stream()
-              .map(studentTestMapper::toDto)
-              .toList();
-    }
+  @PreAuthorize("hasRole('STUDENT')")
+  @GetMapping("/my")
+  public List<StudentTestResponse> myAttempts(@RequestParam Integer testId) {
+    return studentTestService.listAttemptsForStudents(testId).stream()
+            .map(studentTestMapper::toDto)
+            .toList();
   }
 
   /* UPDATE */

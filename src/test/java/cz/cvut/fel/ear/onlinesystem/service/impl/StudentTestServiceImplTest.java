@@ -8,7 +8,10 @@ import cz.cvut.fel.ear.onlinesystem.model.StudentTest;
 import cz.cvut.fel.ear.onlinesystem.model.User;
 import cz.cvut.fel.ear.onlinesystem.repository.StudentAnswerRepository;
 import cz.cvut.fel.ear.onlinesystem.repository.StudentTestRepository;
+import cz.cvut.fel.ear.onlinesystem.repository.TestRepository;
+import cz.cvut.fel.ear.onlinesystem.repository.UserRepository;
 import cz.cvut.fel.ear.onlinesystem.service.StudentTestService;
+import cz.cvut.fel.ear.onlinesystem.service.security.SecurityService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest(classes = {StudentTestServiceImpl.class, AutoGraderService.class})
+@SpringBootTest(classes = {StudentTestServiceImpl.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
 class StudentTestServiceImplTest {
   @Autowired
@@ -32,7 +35,12 @@ class StudentTestServiceImplTest {
   private StudentAnswerRepository answerRepo;
   @MockitoBean
   private AutoGraderService autoGraderService;
-
+  @MockitoBean
+  private  UserRepository userRepository;
+  @MockitoBean
+  private TestRepository testRepository;
+  @MockitoBean
+  private SecurityService securityService;
   /**
    * Integration test for {@link StudentTestService#submitAttempt(int, int)}.
    *

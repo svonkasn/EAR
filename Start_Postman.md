@@ -19,7 +19,7 @@ Aplikace bude dostupná na adrese: `http://localhost:8080`
 ### Scénář 1: Plný testovací cyklus s autogradem
 
 1.  **Login as Student (alice)** - přihlášení studenta
-2.  **Create Attempt** - vytvoření pokusu (userId: 3, testId: 1)
+2.  **Create Attempt** - vytvoření pokusu (userId: 4, testId: 1)
 3.  **Submit Attempt** - odeslání pokusu (autograding se spustí
     automaticky)\
 4.  **Get Attempt by ID** - kontrola výsledku
@@ -27,7 +27,7 @@ Aplikace bude dostupná na adrese: `http://localhost:8080`
 ### Scénář 2: Ruční hodnocení
 
 1.  **Login as Teacher (teacher1)** - přihlášení učitele
-2.  **Grade Open Answer** - ohodnocení otevřené otázky (answerId: 1,
+2.  **Grade Open Answer** - ohodnocení otevřené otázky (answerId: 16,
     points: 3)
 3.  **Finalize Attempt** - finalizace pokusu
 4.  **Get Attempt by ID** - kontrola finálního stavu
@@ -45,8 +45,8 @@ Aplikace bude dostupná na adrese: `http://localhost:8080`
 
 -   **admin** `admin123` (ADMIN)
 -   **teacher1** `teacher123` (TEACHER)
--   **alice**  `alice123` (STUDENT, ID: 3)
--   **bob** `bob123` (STUDENT, ID: 4)
+-   **alice**  `alice123` (STUDENT, ID: 4)
+-   **bob** `bob123` (STUDENT, ID: 5)
 
 ### Testy:
 
@@ -98,7 +98,7 @@ Aplikace bude dostupná na adrese: `http://localhost:8080`
 ``` json
 POST /rest/attempts
 {
-    "userId": 3,
+    "userId": 4,
     "testId": 1
 }
 ```
@@ -108,7 +108,7 @@ POST /rest/attempts
 ``` json
 POST /rest/attempts/{attemptId}/submit
 {
-    "userId": 3
+    "userId": 4
 }
 ```
 

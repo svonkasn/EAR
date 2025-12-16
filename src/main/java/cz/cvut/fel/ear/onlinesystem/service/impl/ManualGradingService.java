@@ -8,6 +8,7 @@ import cz.cvut.fel.ear.onlinesystem.model.StudentAnswer;
 import cz.cvut.fel.ear.onlinesystem.model.StudentTest;
 import cz.cvut.fel.ear.onlinesystem.repository.StudentAnswerRepository;
 import cz.cvut.fel.ear.onlinesystem.repository.StudentTestRepository;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +44,8 @@ public class ManualGradingService {
         StudentAnswer a = answerRepo.findById(answerId)
                 .orElseThrow(() -> new NotFoundException("Answer " + answerId + " not found"));
 
-        if (!(a.getQuestion() instanceof OpenQuestion)) {
+        Object realQ = Hibernate.unproxy(a.getQuestion());
+        if (!(realQ instanceof OpenQuestion oq)) {
             throw new ValidationException("Only OpenQuestion can be graded manually");
         }
         Integer max = a.getQuestion().getPoint();

@@ -101,13 +101,47 @@ INSERT INTO MULTIPLE_CHOICE (
   MULTIPLE_CORRECT
 )
 VALUES
-  (2, 'int', 'String', 'boolean', 'Apple', TRUE, FALSE, TRUE, FALSE, TRUE);
+    -- Q2 (Test 1) Which types are primitive?
+    (2, 'int', 'String', 'boolean', 'Apple', TRUE, FALSE, TRUE, FALSE, TRUE),
+
+    -- Q5 (Test 2) Pick valid List implementations.
+    (5, 'ArrayList', 'HashMap', 'LinkedList', 'StringBuilder', TRUE, FALSE, TRUE, FALSE, TRUE),
+
+    -- Q9 (Spring Test 1) Pick valid Spring stereotypes.
+    (9, '@Component', '@Service', '@Repository', '@Transactional', TRUE, TRUE, TRUE, FALSE, TRUE);
 
 -- === OPEN QUESTIONS ===
 INSERT INTO OPEN_QUESTION (ID, EXPECTED_ANSWER, MAX_LENGTH)
 VALUES
-  (1, 'Java Virtual Machine', 300),
-  (3, 'Inheritance, polymorphism, abstraction, encapsulation', 500);
+    -- Q1 (Test 1) What is JVM?
+    (1,  'Java Virtual Machine: runs Java bytecode, provides runtime environment, manages memory/GC.', 300),
+
+    -- Q3 (Test 1) Explain OOP.
+    (3,  'OOP principles: encapsulation, abstraction, inheritance, polymorphism; objects/classes.', 500),
+
+    -- Q4 (Test 2) What is polymorphism?
+    (4,  'Polymorphism: ability to treat objects via common interface; overriding enables runtime dispatch.', 400),
+
+    -- Q6 (Test 2) Explain equals/hashCode contract.
+    (6,  'If equals() true then hashCode must be equal; consistent; equals must be reflexive/symmetric/transitive.', 600),
+
+    -- Q7 (Spring Test 1) What is Dependency Injection?
+    (7,  'DI: dependencies are provided from outside (constructor/setter), often by IoC container (Spring).', 400),
+
+    -- Q8 (Spring Test 1) What does @Transactional do?
+    (8,  'Wraps method in transaction; commits/rolls back on exceptions; controls propagation/isolation.', 500),
+
+    -- Q10 (Spring Test 1) Explain N+1 problem in ORM.
+    (10, 'N+1: one query loads parents + N queries for children due to lazy loading; fix with fetch join/entity graph.', 650),
+
+    -- Q11 (DB Test 1) Explain INNER vs LEFT JOIN.
+    (11, 'INNER returns only matching rows; LEFT returns all left rows + NULLs for non-matching right rows.', 500),
+
+    -- Q12 (DB Test 1) What is an index and when it helps?
+    (12, 'Index is extra data structure (e.g., B-tree) that speeds lookups/sorts on selective queries; costs writes.', 550),
+
+    -- Q13 (DB Test 1) What is ACID?
+    (13, 'ACID: Atomicity, Consistency, Isolation, Durability (transaction guarantees).', 350);
 
 -- === STUDENT TEST ===
 INSERT INTO STUDENT_TEST (SCORE, TEST_ID, USER_ID, STATUS)
@@ -131,24 +165,24 @@ VALUES
 INSERT INTO STUDENT_ANSWER
 (SEL_A, SEL_B, SEL_C, SEL_D, AWARDED_POINTS, CORRECT, TEACHER_NOTE, STUDENT_TEST_ID, QUESTION_ID, ANSWER_ORDER )
 VALUES
-  (NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1),
-  (TRUE, FALSE, TRUE, FALSE, NULL, NULL, NULL, 1, 2, 2);
+  (NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1), -- Q1 open (no grading yet)
+  (TRUE, FALSE, TRUE, FALSE, NULL, NULL, NULL, 1, 2, 2); -- Q2 MCQ (chosen, not graded yet)
 
 -- Attempt #2: (stId=2) bob on Java Test 1 -> EVALUATED, score=7
 INSERT INTO STUDENT_ANSWER
 (SEL_A, SEL_B, SEL_C, SEL_D, AWARDED_POINTS, CORRECT, TEACHER_NOTE, STUDENT_TEST_ID, QUESTION_ID, ANSWER_ORDER )
 VALUES
-  (NULL, NULL, NULL, NULL, 3, TRUE, 'Good explanation', 2, 1, 1),
-  (TRUE, FALSE, TRUE, FALSE, 4, TRUE, NULL, 2, 2, 2),
-  (NULL, NULL, NULL, NULL, 0, FALSE, NULL, 2, 3, 3);
+  (NULL, NULL, NULL, NULL, 3, TRUE, 'Good explanation', 2, 1, 1), -- Q1 open (3/3)
+  (TRUE, FALSE, TRUE, FALSE, 4, TRUE, NULL, 2, 2, 2), -- Q2 MCQ (4/4)
+  (NULL, NULL, NULL, NULL, 0, FALSE, NULL, 2, 3, 3); -- Q3 open (0/3) => total 7
 
 -- Attempt #3: (stId=3) alice on Java Test 2 -> SUBMITTED (open pending), score NULL
 INSERT INTO STUDENT_ANSWER
 (SEL_A, SEL_B, SEL_C, SEL_D, AWARDED_POINTS, CORRECT, TEACHER_NOTE, STUDENT_TEST_ID, QUESTION_ID, ANSWER_ORDER)
 VALUES
-    (NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, 4, 1),
-    (TRUE, FALSE, TRUE, FALSE, 5, TRUE,  NULL, 3, 5, 2),
-    ( NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, 6, 3);
+    (NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, 4, 1), -- Q4 open (pending)
+    (TRUE, FALSE, TRUE, FALSE, 5, TRUE,  NULL, 3, 5, 2), -- Q5 MCQ graded (5/5)
+    ( NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, 6, 3); -- Q6 open (pending)
 
 -- Attempt #4: (stId=4) bob on Java Test 2 -> EVALUATED, score=12 (из 15)
 INSERT INTO STUDENT_ANSWER

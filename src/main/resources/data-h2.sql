@@ -210,7 +210,7 @@ VALUES
     (TRUE, FALSE, TRUE, TRUE, 5, TRUE,  NULL, 7, 9, 3),              -- Q9 MCQ graded
     (NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7,10, 4);             -- Q10 open pending
 
--- Attempt #8: (stId=8) carol on DB Test 1 -> IN_PROGRESS (частично)
+-- Attempt #8: (stId=8) carol on DB Test 1 -> IN_PROGRESS
 INSERT INTO STUDENT_ANSWER
 (SEL_A, SEL_B, SEL_C, SEL_D, AWARDED_POINTS, CORRECT, TEACHER_NOTE, STUDENT_TEST_ID, QUESTION_ID, ANSWER_ORDER)
 VALUES

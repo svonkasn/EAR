@@ -1,22 +1,18 @@
-# EAR-onlineSystemTests
+# EAR — Online System for Tests and Exams
 
+## Overview
+A web application designed for creating, managing, and grading tests and exams. Built as a clear, intuitive tool for educational institutions and organizations, it streamlines test preparation, student participation, and automated/manual assessment across three distinct user roles (**Administrator**, **Teacher**, and **Student**).
 
+## Key Features
+- **User & Role Management:** Role-based permissions for **Students**, **Teachers**, and **Administrators**.
+- **Test & Question Authoring:** Teachers can create and edit tests, configure time limits, and manage diverse question types (including multiple-choice and open-ended questions).
+- **Test Participation:** Students can register for and complete assigned tests within defined parameters.
+- **Hybrid Evaluation:** Automatic grading for closed-ended questions combined with manual review workflows for open-ended responses.
+- **Results, Analytics & Export:** Individual student performance breakdowns (scores, completion time, attempt counts), summary statistics for teachers (average success rates, pass percentages, common mistakes), and Excel report exports.
 
-## Krátký popis očekávané funkcionality:
-Cílem projektu je implementovat webovou aplikaci určenou pro tvorbu, správu a vyhodnocování testů a zkoušek. Uživatelé systému budou rozděleni do několika rolí (administrátor, vyučující, student) a budou mít odlišné možnosti práce se systémem. Hlavním cílem je poskytnout univerzitám, školám a dalším vzdělávacím institucím jednoduchý a přehledný nástroj, který umožní efektivní přípravu testů a jejich automatické vyhodnocování.
+## Target Audience
+- **Educational Institutions:** High schools, universities, and language schools seeking an efficient solution to manage assessments and evaluate student knowledge.
+- **Corporate Training:** Companies conducting internal employee training and certification testing.
 
-
-## Seznam hlavních funkcí aplikace:
-- **Správa** uživatelských účtů a rolí
-  - student
-  - vyučující
-  - administrátor
-- **Vytváření** a **editace** testů (vyučující).
-- **Přidávání** a **správa** otázek různých typů (např. multiple-choice, otevřené otázky).
-- Možnost **definovat časové limity** testu.
-- **Registrace** studentů na testy a jejich **vyplňování**.
-- Automatické **vyhodnocování** testů (u uzavřených otázek), možnost manuální kontroly u otevřených otázek.
-- **Generování výsledků a statistik:** automatické vyhodnocení, možnost manuálního hodnocení, přehledné výsledky jednotlivých studentů (skóre, čas vyplňování, počet pokusů), souhrnné statistiky pro vyučující (průměrná úspěšnost, procento splněných testů, nejčastější chyby studentů).
-
-## Komu bude výsledný systém určen:
-Systém bude určen především pro vzdělávací instituce (střední školy, vysoké školy, jazykové kurzy), které potřebují efektivně spravovat testování studentů a vyhodnocovat jejich znalosti. Aplikaci lze využít i pro interní školení a testování zaměstnanců v rámci firem.
+## Documentation
+For detailed technical architecture, setup instructions, API testing scenarios, and project reflection, please refer to the **[Final Semester Project Report](./docs/documentation-onlineTestSystem-eng.pdf)**.
